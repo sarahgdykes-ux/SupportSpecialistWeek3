@@ -15,8 +15,10 @@ const teamOptions = ["Support", "Engineering", "Billing", "Infrastructure", "Pro
 
 const ui = {
   ticketInput: document.getElementById("ticket-input"),
+  ticketCountValue: document.getElementById("ticket-count-value"),
   apiKeyInput: document.getElementById("api-key"),
   analyzeButton: document.getElementById("analyze-btn"),
+  tryExampleButton: document.getElementById("try-example-btn"),
   clearButton: document.getElementById("clear-btn"),
   placeholder: document.getElementById("results-placeholder"),
   loadingState: document.getElementById("loading-state"),
@@ -48,6 +50,66 @@ function clearResults() {
   ui.resultsCard.innerHTML = "";
 }
 
+function loadExampleTickets() {
+  const exampleTickets = `I cannot log into my account. I've tried resetting my password but I'm not receiving the reset email. This is blocking me from doing my work.
+
+Our billing system is down and customers cannot process payments. This is affecting all users and needs immediate attention.
+
+The application is running very slow today. Page load times are taking 10+ seconds which is impacting user experience.
+
+I need to request a new feature for the dashboard. It would be great to have a weekly summary report emailed to managers.
+
+There's a bug in the reporting module where the export to CSV function is throwing an error when there are more than 1000 rows.
+
+I need to update my user permissions. I should have access to the admin panel but I'm getting a permission denied error.`;
+
+  ui.ticketInput.value = exampleTickets;
+  updateTicketCount();
+  clearResults();
+  ui.ticketInput.focus();
+}
+
+function updateTicketCount() {
+  const ticketTexts = parseTickets(ui.ticketInput.value);
+  ui.ticketCountValue.textContent = ticketTexts.length;
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  ui.ticketInput.classList.add("drag-over");
+}
+
+function handleDragLeave(e) {
+  e.preventDefault();
+  ui.ticketInput.classList.remove("drag-over");
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  ui.ticketInput.classList.remove("drag-over");
+
+  const files = e.dataTransfer.files;
+  if (files.length === 0) return;
+
+  const file = files[0];
+  if (!file.type.match("text.*") && !file.name.endsWith(".txt") && !file.name.endsWith(".md")) {
+    showError("Please drop a text file (.txt, .md) containing ticket information.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    ui.ticketInput.value = event.target.result;
+    updateTicketCount();
+    clearResults();
+    ui.ticketInput.focus();
+  };
+  reader.onerror = () => {
+    showError("Failed to read the file. Please try again.");
+  };
+  reader.readAsText(file);
+}
+
 const priorityOrder = {
   Critical: 0,
   High: 1,
@@ -62,6 +124,22 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function getPriorityBadgeClass(priority) {
+  const normalizedPriority = (priority || "").toLowerCase();
+  switch (normalizedPriority) {
+    case "critical":
+      return "critical";
+    case "high":
+      return "high";
+    case "medium":
+      return "medium";
+    case "low":
+      return "low";
+    default:
+      return "";
+  }
 }
 
 function normalizeResult(result, ticketText = "") {
@@ -90,42 +168,72 @@ function parseTickets(rawText) {
 }
 
 function buildResultsMarkup(results) {
-  const sortedResults = [...results].sort((a, b) => {
-    const left = priorityOrder[a.priority] ?? Number.MAX_SAFE_INTEGER;
-    const right = priorityOrder[b.priority] ?? Number.MAX_SAFE_INTEGER;
-    return left - right;
+  // Group by suggested team, then sort by priority within each team
+  const groupedByTeam = results.reduce((acc, result) => {
+    const team = result.suggestedTeam || "Support";
+    if (!acc[team]) {
+      acc[team] = [];
+    }
+    acc[team].push(result);
+    return acc;
+  }, {});
+
+  // Sort teams alphabetically for consistent display
+  const sortedTeams = Object.keys(groupedByTeam).sort();
+
+  // Sort tickets within each team by priority (highest first)
+  sortedTeams.forEach(team => {
+    groupedByTeam[team].sort((a, b) => {
+      const left = priorityOrder[a.priority] ?? Number.MAX_SAFE_INTEGER;
+      const right = priorityOrder[b.priority] ?? Number.MAX_SAFE_INTEGER;
+      return left - right;
+    });
   });
 
   return `
     <div class="results-stack">
       <div class="results-header">
-        <h3>${sortedResults.length > 1 ? "Priority Queue" : "Analysis Result"}</h3>
-        <span>${sortedResults.length} ticket${sortedResults.length === 1 ? "" : "s"}</span>
+        <h3>${results.length > 1 ? "Priority Queue" : "Analysis Result"}</h3>
+        <span>${results.length} ticket${results.length === 1 ? "" : "s"}</span>
       </div>
       <div class="results-list">
-        ${sortedResults
+        ${sortedTeams
           .map(
-            (result) => `
-              <article class="result-card">
-                <div class="result-card-header">
-                  <strong>${escapeHtml(result.ticket || "Ticket")}</strong>
-                  <span class="badge">${escapeHtml(result.priority)}</span>
+            (team) => `
+              <div class="team-section">
+                <button class="team-toggle" aria-expanded="true" data-team="${escapeHtml(team)}">
+                  <h4 class="team-header">${escapeHtml(team)}</h4>
+                  <span class="toggle-icon">▼</span>
+                </button>
+                <div class="team-tickets">
+                  ${groupedByTeam[team]
+                    .map(
+                      (result) => `
+                        <article class="result-card">
+                          <div class="result-card-header">
+                            <strong>${escapeHtml(result.ticket || "Ticket")}</strong>
+                            <span class="badge ${getPriorityBadgeClass(result.priority)}">${escapeHtml(result.priority)}</span>
+                          </div>
+                          <div class="result-grid">
+                            <div class="result-item">
+                              <strong>Issue Type</strong>
+                              <span class="badge secondary-badge">${escapeHtml(result.issueType)}</span>
+                            </div>
+                            <div class="result-item">
+                              <strong>Suggested Team</strong>
+                              <span>${escapeHtml(result.suggestedTeam)}</span>
+                            </div>
+                            <div class="result-item">
+                              <strong>Why this was chosen</strong>
+                              <span>${escapeHtml(result.explanation)}</span>
+                            </div>
+                          </div>
+                        </article>
+                      `
+                    )
+                    .join("")}
                 </div>
-                <div class="result-grid">
-                  <div class="result-item">
-                    <strong>Issue Type</strong>
-                    <span class="badge secondary-badge">${escapeHtml(result.issueType)}</span>
-                  </div>
-                  <div class="result-item">
-                    <strong>Suggested Team</strong>
-                    <span>${escapeHtml(result.suggestedTeam)}</span>
-                  </div>
-                  <div class="result-item">
-                    <strong>Why this was chosen</strong>
-                    <span>${escapeHtml(result.explanation)}</span>
-                  </div>
-                </div>
-              </article>
+              </div>
             `
           )
           .join("")}
@@ -240,14 +348,35 @@ async function handleAnalyze() {
 
 function attachEvents() {
   ui.analyzeButton.addEventListener("click", handleAnalyze);
+  ui.tryExampleButton.addEventListener("click", loadExampleTickets);
   ui.clearButton.addEventListener("click", () => {
     ui.ticketInput.value = "";
     ui.apiKeyInput.value = "";
+    updateTicketCount();
     clearResults();
+    ui.ticketInput.focus();
+  });
+
+  // Update ticket count on textarea input
+  ui.ticketInput.addEventListener("input", updateTicketCount);
+
+  // Drag and drop events
+  ui.ticketInput.addEventListener("dragover", handleDragOver);
+  ui.ticketInput.addEventListener("dragleave", handleDragLeave);
+  ui.ticketInput.addEventListener("drop", handleDrop);
+
+  // Team toggle event delegation
+  ui.resultsCard.addEventListener("click", (e) => {
+    const toggleButton = e.target.closest(".team-toggle");
+    if (toggleButton) {
+      const isExpanded = toggleButton.getAttribute("aria-expanded") === "true";
+      toggleButton.setAttribute("aria-expanded", !isExpanded);
+    }
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   attachEvents();
   clearResults();
+  ui.ticketInput.focus();
 });

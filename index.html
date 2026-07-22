@@ -26,8 +26,17 @@
           <textarea
             id="ticket-input"
             rows="10"
-            placeholder="Paste one ticket per paragraph or separate them with a blank line..."
+            placeholder="Example ticket format:
+
+I cannot log into my account. I've tried resetting my password but I'm not receiving the reset email.
+
+The application is running very slow today. Page load times are taking 10+ seconds.
+
+Paste multiple tickets separated by a blank line..."
           ></textarea>
+          <div class="ticket-count">
+            <span id="ticket-count-value">0</span> ticket(s)
+          </div>
 
           <label for="api-key">OpenAI API key (optional)</label>
           <input
@@ -38,6 +47,7 @@
 
           <div class="button-row">
             <button id="analyze-btn" type="button">Analyze Tickets</button>
+            <button id="try-example-btn" class="secondary" type="button">Try Example</button>
             <button id="clear-btn" class="secondary" type="button">Clear</button>
           </div>
 

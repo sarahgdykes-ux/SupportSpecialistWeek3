@@ -104,10 +104,30 @@ textarea {
   margin-bottom: 16px;
 }
 
+.ticket-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+#ticket-count-value {
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
 textarea:focus,
 input:focus {
   outline: none;
   border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+}
+
+textarea.drag-over {
+  border-color: var(--accent);
+  background: #eef4ff;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
 }
 
@@ -236,7 +256,58 @@ button:active {
 
 .results-list {
   display: grid;
+  gap: 20px;
+}
+
+.team-section {
+  display: grid;
   gap: 12px;
+}
+
+.team-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.team-toggle:hover {
+  opacity: 0.8;
+}
+
+.team-header {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+
+.toggle-icon {
+  font-size: 0.8rem;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+}
+
+.team-toggle[aria-expanded="false"] .toggle-icon {
+  transform: rotate(-90deg);
+}
+
+.team-tickets {
+  display: grid;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.team-toggle[aria-expanded="false"] + .team-tickets {
+  display: none;
 }
 
 .result-card {
@@ -293,6 +364,26 @@ button:active {
   color: var(--accent-strong);
   font-weight: 700;
   font-size: 0.9rem;
+}
+
+.badge.critical {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.badge.high {
+  background: #ffedd5;
+  color: #ea580c;
+}
+
+.badge.medium {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badge.low {
+  background: #dcfce7;
+  color: #16a34a;
 }
 
 .secondary-badge {
