@@ -211,6 +211,54 @@ button:active {
   background: linear-gradient(160deg, #ffffff 0%, #f9fbff 100%);
 }
 
+.results-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.results-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.results-header span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.results-list {
+  display: grid;
+  gap: 12px;
+}
+
+.result-card {
+  border: 1px solid #edf2f7;
+  border-radius: 16px;
+  padding: 14px;
+  background: #fcfdff;
+}
+
+.result-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.result-card-header strong {
+  color: var(--text);
+  line-height: 1.5;
+}
+
 .result-grid {
   display: grid;
   gap: 14px;
@@ -245,6 +293,11 @@ button:active {
   color: var(--accent-strong);
   font-weight: 700;
   font-size: 0.9rem;
+}
+
+.secondary-badge {
+  background: #f1f5f9;
+  color: var(--text);
 }
 
 .hidden {

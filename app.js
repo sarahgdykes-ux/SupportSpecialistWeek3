@@ -48,13 +48,31 @@ function clearResults() {
   ui.resultsCard.innerHTML = "";
 }
 
-function normalizeResult(result) {
+const priorityOrder = {
+  Critical: 0,
+  High: 1,
+  Medium: 2,
+  Low: 3,
+};
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function normalizeResult(result, ticketText = "") {
   const issueType = result.issueType || "Other";
   const priority = result.priority || "Medium";
   const suggestedTeam = result.suggestedTeam || "Support";
   const explanation = result.explanation || "No explanation was provided.";
+  const ticket = ticketText || result.ticket || result.ticketText || "";
 
   return {
+    ticket,
     issueType,
     priority,
     suggestedTeam,
@@ -62,32 +80,62 @@ function normalizeResult(result) {
   };
 }
 
-function buildResultMarkup(result) {
+function parseTickets(rawText) {
+  return rawText
+    .split(/\n\s*\n/)
+    .map((ticket) => ticket.trim())
+    .filter(Boolean);
+}
+
+function buildResultsMarkup(results) {
+  const sortedResults = [...results].sort((a, b) => {
+    const left = priorityOrder[a.priority] ?? Number.MAX_SAFE_INTEGER;
+    const right = priorityOrder[b.priority] ?? Number.MAX_SAFE_INTEGER;
+    return left - right;
+  });
+
   return `
-    <div class="result-grid">
-      <div class="result-item">
-        <strong>Issue Type</strong>
-        <span class="badge">${result.issueType}</span>
+    <div class="results-stack">
+      <div class="results-header">
+        <h3>${sortedResults.length > 1 ? "Priority Queue" : "Analysis Result"}</h3>
+        <span>${sortedResults.length} ticket${sortedResults.length === 1 ? "" : "s"}</span>
       </div>
-      <div class="result-item">
-        <strong>Priority</strong>
-        <span class="badge">${result.priority}</span>
-      </div>
-      <div class="result-item">
-        <strong>Suggested Team</strong>
-        <span>${result.suggestedTeam}</span>
-      </div>
-      <div class="result-item">
-        <strong>Why this was chosen</strong>
-        <span>${result.explanation}</span>
+      <div class="results-list">
+        ${sortedResults
+          .map(
+            (result) => `
+              <article class="result-card">
+                <div class="result-card-header">
+                  <strong>${escapeHtml(result.ticket || "Ticket")}</strong>
+                  <span class="badge">${escapeHtml(result.priority)}</span>
+                </div>
+                <div class="result-grid">
+                  <div class="result-item">
+                    <strong>Issue Type</strong>
+                    <span class="badge secondary-badge">${escapeHtml(result.issueType)}</span>
+                  </div>
+                  <div class="result-item">
+                    <strong>Suggested Team</strong>
+                    <span>${escapeHtml(result.suggestedTeam)}</span>
+                  </div>
+                  <div class="result-item">
+                    <strong>Why this was chosen</strong>
+                    <span>${escapeHtml(result.explanation)}</span>
+                  </div>
+                </div>
+              </article>
+            `
+          )
+          .join("")}
       </div>
     </div>
   `;
 }
 
-function renderResults(result) {
-  const normalized = normalizeResult(result);
-  ui.resultsCard.innerHTML = buildResultMarkup(normalized);
+function renderResults(resultOrResults) {
+  const entries = Array.isArray(resultOrResults) ? resultOrResults : [resultOrResults];
+  const normalized = entries.map((entry, index) => normalizeResult(entry, entry.ticket || entry.ticketText || ""));
+  ui.resultsCard.innerHTML = buildResultsMarkup(normalized);
   ui.resultsCard.classList.remove("hidden");
   ui.placeholder.classList.add("hidden");
 }
@@ -149,14 +197,14 @@ function getFallbackAnalysis(ticketText) {
   };
 }
 
-// Send the ticket to the server-side endpoint, which may call OpenAI or use a fallback classifier.
-async function analyzeTicket(ticketText, apiKey) {
+// Send one or more tickets to the server-side endpoint, which may call OpenAI or use a fallback classifier.
+async function analyzeTickets(tickets, apiKey) {
   const response = await fetch("/api/analyze", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ ticketText, apiKey }),
+    body: JSON.stringify({ tickets, apiKey }),
   });
 
   if (!response.ok) {
@@ -168,21 +216,21 @@ async function analyzeTicket(ticketText, apiKey) {
 }
 
 async function handleAnalyze() {
-  const ticketText = ui.ticketInput.value.trim();
+  const ticketTexts = parseTickets(ui.ticketInput.value);
   const apiKey = ui.apiKeyInput.value.trim();
 
-  if (!ticketText) {
-    showError("Please paste a support ticket before analyzing it.");
+  if (!ticketTexts.length) {
+    showError("Please paste one or more support tickets before analyzing them.");
     return;
   }
 
   setLoading(true);
 
   try {
-    const result = await analyzeTicket(ticketText, apiKey);
+    const result = await analyzeTickets(ticketTexts, apiKey);
     renderResults(result);
   } catch (error) {
-    showError(error.message || "An unexpected error occurred while analyzing the ticket.");
+    showError(error.message || "An unexpected error occurred while analyzing the tickets.");
   } finally {
     setLoading(false);
   }

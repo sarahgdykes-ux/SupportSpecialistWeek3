@@ -146,30 +146,40 @@ const server = http.createServer(async (req, res) => {
     req.on("end", async () => {
       try {
         const payload = JSON.parse(body || "{}") || {};
-        const ticketText = payload.ticketText || "";
         const apiKey = payload.apiKey || process.env.OPENAI_API_KEY;
+        const ticketList = Array.isArray(payload.tickets)
+          ? payload.tickets.filter((ticket) => typeof ticket === "string" && ticket.trim())
+          : [];
+        const ticketText = payload.ticketText || "";
+        const tickets = ticketList.length ? ticketList : (ticketText ? [ticketText] : []);
 
-        if (!ticketText) {
+        if (!tickets.length) {
           res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
-          res.end(JSON.stringify({ error: "Ticket text is required." }));
+          res.end(JSON.stringify({ error: "At least one ticket is required." }));
           return;
         }
 
-        let result;
-        if (apiKey) {
+        const results = [];
+
+        for (const ticket of tickets) {
           try {
-            result = await analyzeWithOpenAI(ticketText, apiKey);
+            const result = apiKey
+              ? await analyzeWithOpenAI(ticket, apiKey)
+              : getFallbackAnalysis(ticket);
+
+            results.push({
+              ticket,
+              ...result,
+            });
           } catch (error) {
             res.writeHead(502, { "Content-Type": "application/json; charset=utf-8" });
             res.end(JSON.stringify({ error: "The AI service could not analyze the ticket right now. Please try again in a moment." }));
             return;
           }
-        } else {
-          result = getFallbackAnalysis(ticketText);
         }
 
         res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-        res.end(JSON.stringify(result));
+        res.end(JSON.stringify(results));
       } catch (error) {
         res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
         res.end(JSON.stringify({ error: error.message }));

@@ -22,11 +22,11 @@
       <main class="dashboard">
         <section class="panel form-panel" aria-labelledby="ticket-form-title">
           <h2 id="ticket-form-title">Analyze a Ticket</h2>
-          <label for="ticket-input">Support Ticket</label>
+          <label for="ticket-input">Support Tickets</label>
           <textarea
             id="ticket-input"
             rows="10"
-            placeholder="Paste a customer support ticket here..."
+            placeholder="Paste one ticket per paragraph or separate them with a blank line..."
           ></textarea>
 
           <label for="api-key">OpenAI API key (optional)</label>
@@ -37,13 +37,13 @@
           />
 
           <div class="button-row">
-            <button id="analyze-btn" type="button">Analyze Ticket</button>
+            <button id="analyze-btn" type="button">Analyze Tickets</button>
             <button id="clear-btn" class="secondary" type="button">Clear</button>
           </div>
 
           <p class="helper-text">
-            If no API key is provided, the app uses a built-in fallback
-            classifier so you can still explore the experience.
+            Enter multiple tickets at once and the app will sort them into a priority queue.
+            If no API key is provided, the app uses a built-in fallback classifier so you can still explore the experience.
           </p>
         </section>
 

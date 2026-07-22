@@ -92,3 +92,18 @@ test('results stay visible after loading completes', () => {
   assert.equal(ui.resultsCard.classList.contains('hidden'), false);
   assert.equal(ui.placeholder.classList.contains('hidden'), true);
 });
+
+test('multiple results are sorted by priority severity', () => {
+  const { context, ui } = createSandbox();
+
+  vm.runInContext(`
+    const results = [
+      { ticket: 'Low priority issue', issueType: 'Other', priority: 'Low', suggestedTeam: 'Support', explanation: 'Low urgency' },
+      { ticket: 'Critical outage', issueType: 'Login Issue', priority: 'Critical', suggestedTeam: 'Engineering', explanation: 'Service down' }
+    ];
+    renderResults(results);
+  `, context);
+
+  const html = ui.resultsCard.innerHTML;
+  assert.ok(html.indexOf('Critical outage') < html.indexOf('Low priority issue'));
+});
