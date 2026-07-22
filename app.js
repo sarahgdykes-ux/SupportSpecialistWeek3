@@ -81,7 +81,9 @@ function normalizeResult(result, ticketText = "") {
 }
 
 function parseTickets(rawText) {
-  return rawText
+  // Normalize line endings and split by double newlines
+  const normalized = rawText.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  return normalized
     .split(/\n\s*\n/)
     .map((ticket) => ticket.trim())
     .filter(Boolean);
