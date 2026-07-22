@@ -27,9 +27,11 @@ const ui = {
 // Toggle the loading state while the request is in flight.
 function setLoading(isLoading) {
   ui.loadingState.classList.toggle("hidden", !isLoading);
-  ui.placeholder.classList.toggle("hidden", isLoading);
-  ui.resultsCard.classList.add("hidden");
-  ui.errorState.classList.add("hidden");
+
+  if (isLoading) {
+    ui.resultsCard.classList.add("hidden");
+    ui.errorState.classList.add("hidden");
+  }
 }
 
 // Display a friendly message when something goes wrong.
