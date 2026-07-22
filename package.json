@@ -1,0 +1,9 @@
+{
+  "name": "support-triage-mvp",
+  "version": "1.0.0",
+  "description": "A simple MVP web app for AI-powered support ticket triage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

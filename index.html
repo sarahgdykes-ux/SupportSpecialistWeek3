@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Support Ticket Triage MVP</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">AI-powered support triage</p>
+          <h1>Support Ticket Triage MVP</h1>
+          <p>
+            Paste a customer ticket and let the assistant classify the issue,
+            priority, and the team that should handle it.
+          </p>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="panel form-panel" aria-labelledby="ticket-form-title">
+          <h2 id="ticket-form-title">Analyze a Ticket</h2>
+          <label for="ticket-input">Support Ticket</label>
+          <textarea
+            id="ticket-input"
+            rows="10"
+            placeholder="Paste a customer support ticket here..."
+          ></textarea>
+
+          <label for="api-key">OpenAI API key (optional)</label>
+          <input
+            id="api-key"
+            type="password"
+            placeholder="Optional: use your OpenAI API key"
+          />
+
+          <div class="button-row">
+            <button id="analyze-btn" type="button">Analyze Ticket</button>
+            <button id="clear-btn" class="secondary" type="button">Clear</button>
+          </div>
+
+          <p class="helper-text">
+            If no API key is provided, the app uses a built-in fallback
+            classifier so you can still explore the experience.
+          </p>
+        </section>
+
+        <section class="panel results-panel" aria-live="polite">
+          <div id="results-placeholder" class="results-placeholder">
+            Your analysis will appear here.
+          </div>
+          <div id="loading-state" class="loading-state hidden" role="status">
+            <span class="spinner"></span>
+            <span>Analyzing ticket…</span>
+          </div>
+          <div id="error-state" class="error-state hidden"></div>
+          <div id="results-card" class="results-card hidden"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
