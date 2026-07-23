@@ -268,11 +268,13 @@ function buildResultsMarkup(results) {
                 <div class="team-tickets">
                   ${groupedByTeam[team]
                     .map(
-                      (result) => `
-                        <article class="result-card">
+                      (result, index) => `
+                        <article class="result-card" data-ticket-index="${index}">
                           <div class="result-card-header">
                             <strong>${escapeHtml(result.ticket || "Ticket")}</strong>
-                            <span class="badge ${getPriorityBadgeClass(result.priority)}">${escapeHtml(result.priority)}</span>
+                            <select class="priority-select ${getPriorityBadgeClass(result.priority)}" data-ticket-index="${index}">
+                              ${priorityOptions.map(p => `<option value="${escapeHtml(p)}" ${p === result.priority ? 'selected' : ''}>${escapeHtml(p)}</option>`).join('')}
+                            </select>
                           </div>
                           <div class="result-grid">
                             <div class="result-item">
@@ -281,7 +283,9 @@ function buildResultsMarkup(results) {
                             </div>
                             <div class="result-item">
                               <strong>Suggested Team</strong>
-                              <span>${escapeHtml(result.suggestedTeam)}</span>
+                              <select class="team-select" data-ticket-index="${index}">
+                                ${teamOptions.map(t => `<option value="${escapeHtml(t)}" ${t === result.suggestedTeam ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
+                              </select>
                             </div>
                             <div class="result-item">
                               <strong>Why this was chosen</strong>
@@ -487,6 +491,34 @@ function attachEvents() {
     if (toggleButton) {
       const isExpanded = toggleButton.getAttribute("aria-expanded") === "true";
       toggleButton.setAttribute("aria-expanded", !isExpanded);
+    }
+  });
+
+  // Priority select change
+  ui.resultsCard.addEventListener("change", (e) => {
+    if (e.target.classList.contains("priority-select")) {
+      const ticketIndex = e.target.dataset.ticketIndex;
+      const newPriority = e.target.value;
+      const results = JSON.parse(ui.downloadCsvButton.dataset.results || "[]");
+      
+      if (results[ticketIndex]) {
+        results[ticketIndex].priority = newPriority;
+        ui.downloadCsvButton.dataset.results = JSON.stringify(results);
+        
+        // Update badge class
+        e.target.className = `priority-select ${getPriorityBadgeClass(newPriority)}`;
+      }
+    }
+    
+    if (e.target.classList.contains("team-select")) {
+      const ticketIndex = e.target.dataset.ticketIndex;
+      const newTeam = e.target.value;
+      const results = JSON.parse(ui.downloadCsvButton.dataset.results || "[]");
+      
+      if (results[ticketIndex]) {
+        results[ticketIndex].suggestedTeam = newTeam;
+        ui.downloadCsvButton.dataset.results = JSON.stringify(results);
+      }
     }
   });
 

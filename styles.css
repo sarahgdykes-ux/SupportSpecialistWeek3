@@ -427,6 +427,85 @@ button:active {
   line-height: 1.5;
 }
 
+.priority-select,
+.team-select {
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.priority-select:hover,
+.team-select:hover {
+  border-color: var(--accent);
+}
+
+.priority-select:focus,
+.team-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.priority-select.critical {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.priority-select.high {
+  background: #ffedd5;
+  color: #ea580c;
+  border-color: #fed7aa;
+}
+
+.priority-select.medium {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+.priority-select.low {
+  background: #dcfce7;
+  color: #16a34a;
+  border-color: #bbf7d0;
+}
+
+:root.dark .priority-select.critical {
+  background: #7f1d1d;
+  color: #fca5a5;
+  border-color: #991b1b;
+}
+
+:root.dark .priority-select.high {
+  background: #7c2d12;
+  color: #fdba74;
+  border-color: #9a3412;
+}
+
+:root.dark .priority-select.medium {
+  background: #78350f;
+  color: #fcd34d;
+  border-color: #92400e;
+}
+
+:root.dark .priority-select.low {
+  background: #14532d;
+  color: #86efac;
+  border-color: #166534;
+}
+
+:root.dark .priority-select:not(.critical):not(.high):not(.medium):not(.low),
+:root.dark .team-select {
+  background: #0f172a;
+  border-color: #334155;
+}
+
 .result-grid {
   display: grid;
   gap: 14px;
