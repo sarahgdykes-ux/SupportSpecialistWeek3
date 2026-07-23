@@ -231,6 +231,29 @@ button:active {
   background: linear-gradient(160deg, #ffffff 0%, #f9fbff 100%);
 }
 
+.download-csv-btn {
+  margin-top: 16px;
+  width: 100%;
+  background: var(--accent);
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.download-csv-btn:hover {
+  transform: translateY(-1px);
+  background: var(--accent-strong);
+}
+
+.download-csv-btn:active {
+  transform: translateY(0);
+}
+
 .results-stack {
   display: grid;
   gap: 14px;

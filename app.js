@@ -20,6 +20,7 @@ const ui = {
   analyzeButton: document.getElementById("analyze-btn"),
   tryExampleButton: document.getElementById("try-example-btn"),
   clearButton: document.getElementById("clear-btn"),
+  downloadCsvButton: document.getElementById("download-csv-btn"),
   placeholder: document.getElementById("results-placeholder"),
   loadingState: document.getElementById("loading-state"),
   errorState: document.getElementById("error-state"),
@@ -47,6 +48,7 @@ function clearResults() {
   ui.placeholder.classList.remove("hidden");
   ui.resultsCard.classList.add("hidden");
   ui.errorState.classList.add("hidden");
+  ui.downloadCsvButton.classList.add("hidden");
   ui.resultsCard.innerHTML = "";
 }
 
@@ -140,6 +142,46 @@ function getPriorityBadgeClass(priority) {
     default:
       return "";
   }
+}
+
+function escapeCsv(value) {
+  const stringValue = String(value || "");
+  if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {
+    return `"${stringValue.replace(/"/g, '""')}"`;
+  }
+  return stringValue;
+}
+
+function resultsToCsv(results) {
+  const headers = ["Ticket", "Issue Type", "Priority", "Suggested Team", "Explanation"];
+  const csvRows = [headers.join(",")];
+
+  results.forEach((result) => {
+    const row = [
+      escapeCsv(result.ticket),
+      escapeCsv(result.issueType),
+      escapeCsv(result.priority),
+      escapeCsv(result.suggestedTeam),
+      escapeCsv(result.explanation),
+    ];
+    csvRows.push(row.join(","));
+  });
+
+  return csvRows.join("\n");
+}
+
+function downloadCsv(results) {
+  const csvContent = resultsToCsv(results);
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `ticket-analysis-${new Date().toISOString().slice(0, 10)}.csv`);
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 function normalizeResult(result, ticketText = "") {
@@ -248,6 +290,8 @@ function renderResults(resultOrResults) {
   ui.resultsCard.innerHTML = buildResultsMarkup(normalized);
   ui.resultsCard.classList.remove("hidden");
   ui.placeholder.classList.add("hidden");
+  ui.downloadCsvButton.classList.remove("hidden");
+  ui.downloadCsvButton.dataset.results = JSON.stringify(normalized);
 }
 
 // Simple local classifier used when no API key is supplied.
@@ -372,6 +416,12 @@ function attachEvents() {
       const isExpanded = toggleButton.getAttribute("aria-expanded") === "true";
       toggleButton.setAttribute("aria-expanded", !isExpanded);
     }
+  });
+
+  // Download CSV button
+  ui.downloadCsvButton.addEventListener("click", () => {
+    const results = JSON.parse(ui.downloadCsvButton.dataset.results || "[]");
+    downloadCsv(results);
   });
 }
 
