@@ -294,6 +294,56 @@ function renderResults(resultOrResults) {
   ui.downloadCsvButton.dataset.results = JSON.stringify(normalized);
 }
 
+// Call the OpenAI chat completions API when an API key is provided.
+async function analyzeWithOpenAI(ticketText, apiKey) {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      temperature: 0.2,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a support triage assistant. Return strict JSON with issueType, priority, suggestedTeam, explanation. Use the categories: Login Issue, Password Reset, Billing, Bug Report, Feature Request, Performance, Account Management, Other; priorities: Low, Medium, High, Critical; teams: Support, Engineering, Billing, Infrastructure, Product.",
+        },
+        {
+          role: "user",
+          content: `Classify this support ticket:\n${ticketText}`,
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(detail || "OpenAI request failed.");
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content || "{}";
+
+  let parsed;
+  try {
+    parsed = JSON.parse(content);
+  } catch {
+    const match = content.match(/\{[\s\S]*\}/);
+    parsed = match ? JSON.parse(match[0]) : {};
+  }
+
+  return {
+    issueType: parsed.issueType || "Other",
+    priority: parsed.priority || "Medium",
+    suggestedTeam: parsed.suggestedTeam || "Support",
+    explanation: parsed.explanation || "The model did not provide an explanation.",
+    source: "openai",
+  };
+}
+
 // Simple local classifier used when no API key is supplied.
 function getFallbackAnalysis(ticketText) {
   const text = ticketText.toLowerCase();
@@ -351,22 +401,26 @@ function getFallbackAnalysis(ticketText) {
   };
 }
 
-// Send one or more tickets to the server-side endpoint, which may call OpenAI or use a fallback classifier.
+// Analyze tickets using OpenAI API (if key provided) or fallback classifier
 async function analyzeTickets(tickets, apiKey) {
-  const response = await fetch("/api/analyze", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ tickets, apiKey }),
-  });
+  const results = [];
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(errorBody || "The analysis request failed.");
+  for (const ticket of tickets) {
+    try {
+      const result = apiKey
+        ? await analyzeWithOpenAI(ticket, apiKey)
+        : getFallbackAnalysis(ticket);
+
+      results.push({
+        ticket,
+        ...result,
+      });
+    } catch (error) {
+      throw new Error(`Failed to analyze ticket: ${error.message}`);
+    }
   }
 
-  return response.json();
+  return results;
 }
 
 async function handleAnalyze() {
