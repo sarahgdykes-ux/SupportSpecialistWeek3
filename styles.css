@@ -11,6 +11,19 @@
   --shadow: 0 20px 45px rgba(20, 33, 61, 0.08);
 }
 
+:root.dark {
+  color-scheme: dark;
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-strong: #60a5fa;
+  --border: #334155;
+  --danger: #ef4444;
+  --shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -20,6 +33,11 @@ body {
   font-family: Inter, "Segoe UI", Roboto, sans-serif;
   background: linear-gradient(135deg, #eef4ff 0%, var(--bg) 100%);
   color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+:root.dark body {
+  background: linear-gradient(135deg, #1e293b 0%, var(--bg) 100%);
 }
 
 .app-shell {
@@ -35,6 +53,32 @@ body {
   border-radius: 24px;
   box-shadow: var(--shadow);
   margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dark-mode-toggle {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.dark-mode-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.dark-mode-toggle:active {
+  transform: scale(0.95);
 }
 
 .eyebrow {
@@ -71,6 +115,7 @@ body {
   border-radius: 24px;
   padding: 24px;
   box-shadow: var(--shadow);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-panel h2,
@@ -95,7 +140,12 @@ input {
   font: inherit;
   color: var(--text);
   background: #fbfdff;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.3s ease, color 0.3s ease;
+}
+
+:root.dark textarea,
+:root.dark input {
+  background: #0f172a;
 }
 
 textarea {
@@ -187,6 +237,11 @@ button:active {
   display: grid;
   place-items: center;
   text-align: center;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+:root.dark .results-placeholder {
+  background: #1e293b;
 }
 
 .loading-state,
@@ -204,9 +259,17 @@ button:active {
   color: var(--accent-strong);
 }
 
+:root.dark .loading-state {
+  background: #1e3a5f;
+}
+
 .error-state {
   background: #fef2f2;
   color: var(--danger);
+}
+
+:root.dark .error-state {
+  background: #3f1a1a;
 }
 
 .spinner {
@@ -229,6 +292,11 @@ button:active {
   border-radius: 18px;
   padding: 20px;
   background: linear-gradient(160deg, #ffffff 0%, #f9fbff 100%);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+:root.dark .results-card {
+  background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
 }
 
 .download-csv-btn {
@@ -338,6 +406,12 @@ button:active {
   border-radius: 16px;
   padding: 14px;
   background: #fcfdff;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+:root.dark .result-card {
+  background: #1e293b;
+  border-color: #334155;
 }
 
 .result-card-header {
@@ -361,6 +435,11 @@ button:active {
 .result-item {
   border-bottom: 1px solid #edf2f7;
   padding-bottom: 10px;
+  transition: border-color 0.3s ease;
+}
+
+:root.dark .result-item {
+  border-bottom-color: #334155;
 }
 
 .result-item:last-child {

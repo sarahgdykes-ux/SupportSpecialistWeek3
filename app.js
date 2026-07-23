@@ -21,6 +21,7 @@ const ui = {
   tryExampleButton: document.getElementById("try-example-btn"),
   clearButton: document.getElementById("clear-btn"),
   downloadCsvButton: document.getElementById("download-csv-btn"),
+  darkModeToggle: document.getElementById("dark-mode-toggle"),
   placeholder: document.getElementById("results-placeholder"),
   loadingState: document.getElementById("loading-state"),
   errorState: document.getElementById("error-state"),
@@ -74,6 +75,23 @@ I need to update my user permissions. I should have access to the admin panel bu
 function updateTicketCount() {
   const ticketTexts = parseTickets(ui.ticketInput.value);
   ui.ticketCountValue.textContent = ticketTexts.length;
+}
+
+function toggleDarkMode() {
+  const isDark = document.documentElement.classList.toggle("dark");
+  localStorage.setItem("darkMode", isDark);
+  ui.darkModeToggle.querySelector(".dark-mode-icon").textContent = isDark ? "☀️" : "🌙";
+}
+
+function initDarkMode() {
+  const savedDarkMode = localStorage.getItem("darkMode");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const shouldUseDark = savedDarkMode === "true" || (savedDarkMode === null && prefersDark);
+
+  if (shouldUseDark) {
+    document.documentElement.classList.add("dark");
+    ui.darkModeToggle.querySelector(".dark-mode-icon").textContent = "☀️";
+  }
 }
 
 function handleDragOver(e) {
@@ -477,10 +495,14 @@ function attachEvents() {
     const results = JSON.parse(ui.downloadCsvButton.dataset.results || "[]");
     downloadCsv(results);
   });
+
+  // Dark mode toggle
+  ui.darkModeToggle.addEventListener("click", toggleDarkMode);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   attachEvents();
   clearResults();
   ui.ticketInput.focus();
+  initDarkMode();
 });
