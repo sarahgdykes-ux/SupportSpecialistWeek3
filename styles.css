@@ -287,7 +287,7 @@ button:active {
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 
-:root.dark .results-placeholder {
+:root.dark.results-placeholder {
   background: #1e293b;
 }
 
@@ -306,7 +306,7 @@ button:active {
   color: var(--accent-strong);
 }
 
-:root.dark .loading-state {
+:root.dark.loading-state {
   background: #1e3a5f;
 }
 
@@ -315,7 +315,7 @@ button:active {
   color: var(--danger);
 }
 
-:root.dark .error-state {
+:root.dark.error-state {
   background: #3f1a1a;
 }
 
@@ -342,7 +342,7 @@ button:active {
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 
-:root.dark .results-card {
+:root.dark.results-card {
   background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
 }
 
@@ -442,7 +442,7 @@ button:active {
   transition: transform 0.2s ease;
 }
 
-.team-toggle[aria-expanded="false"] .toggle-icon {
+.team-toggle[aria-expanded="false"].toggle-icon {
   transform: rotate(-90deg);
 }
 
@@ -452,7 +452,7 @@ button:active {
   transition: all 0.3s ease;
 }
 
-.team-toggle[aria-expanded="false"] + .team-tickets {
+.team-toggle[aria-expanded="false"] +.team-tickets {
   display: none;
 }
 
@@ -464,7 +464,7 @@ button:active {
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 
-:root.dark .result-card {
+:root.dark.result-card {
   background: #1e293b;
   border-color: #334155;
 }
@@ -538,32 +538,32 @@ button:active {
   border-color: #bbf7d0;
 }
 
-:root.dark .priority-select.critical {
+:root.dark.priority-select.critical {
   background: #7f1d1d;
   color: #fca5a5;
   border-color: #991b1b;
 }
 
-:root.dark .priority-select.high {
+:root.dark.priority-select.high {
   background: #7c2d12;
   color: #fdba74;
   border-color: #9a3412;
 }
 
-:root.dark .priority-select.medium {
+:root.dark.priority-select.medium {
   background: #78350f;
   color: #fcd34d;
   border-color: #92400e;
 }
 
-:root.dark .priority-select.low {
+:root.dark.priority-select.low {
   background: #14532d;
   color: #86efac;
   border-color: #166534;
 }
 
-:root.dark .priority-select:not(.critical):not(.high):not(.medium):not(.low),
-:root.dark .team-select {
+:root.dark.priority-select:not(.critical):not(.high):not(.medium):not(.low),
+:root.dark.team-select {
   background: #0f172a;
   border-color: #334155;
 }
@@ -579,7 +579,7 @@ button:active {
   transition: border-color 0.3s ease;
 }
 
-:root.dark .result-item {
+:root.dark.result-item {
   border-bottom-color: #334155;
 }
 
@@ -639,22 +639,22 @@ button:active {
 }
 
 @media (max-width: 900px) {
-  .dashboard {
+  dashboard {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 600px) {
-  .app-shell {
+  app-shell {
     padding: 16px 14px 36px;
   }
 
-  .hero,
-  .panel {
+  hero,
+  panel {
     padding: 18px;
   }
 
-  .button-row {
+  button-row {
     flex-direction: column;
   }
 
