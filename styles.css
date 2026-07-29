@@ -56,6 +56,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
 }
 
 .dark-mode-toggle {
@@ -225,6 +226,15 @@ textarea.drag-over {
   margin-top: 18px;
 }
 
+@media (max-width: 480px) {
+  button-row {
+    flex-direction: column;
+  }
+  button-row button {
+    width: 100%;
+  }
+}
+
 button {
   border: none;
   border-radius: 999px;
@@ -372,6 +382,14 @@ button:active {
   margin-bottom: 8px;
 }
 
+@media (max-width: 480px) {
+  results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
 .results-header h3 {
   margin: 0;
   font-size: 1rem;
@@ -457,6 +475,13 @@ button:active {
   align-items: flex-start;
   gap: 10px;
   margin-bottom: 10px;
+}
+
+@media (max-width: 480px) {
+  result-card-header {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
 .result-card-header strong {
