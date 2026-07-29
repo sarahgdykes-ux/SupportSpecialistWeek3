@@ -469,7 +469,7 @@ async function analyzeWithOpenAI(ticketText, apiKey) {
         {
           role: "system",
           content:
-            "You are a support triage assistant. Return strict JSON with issueType, priority, suggestedTeam, explanation. Use the categories: Login Issue, Password Reset, Billing, Bug Report, Feature Request, Performance, Account Management, Other; priorities: Low, Medium, High, Critical; teams: Support, Engineering, Billing, Infrastructure, Product.",
+            "You are a support triage assistant. Return strict JSON with issueType, priority, suggestedTeam, explanation. Use the categories: Login Issue, Password Reset, Billing, Bug Report, Feature Request, Performance, Account Management, Hardware Issue, Other; priorities: Low, Medium, High, Critical; teams: Support, Engineering, Billing, Infrastructure, Product. IMPORTANT: Distinguish between 'charger/charging' (hardware/power device - Engineering team) and 'charge' (billing/payment - Billing team). If the ticket mentions charger, charging, battery, power, plug, or cable with 'charge', classify as Hardware Issue for Engineering team.",
         },
         {
           role: "user",
@@ -518,7 +518,10 @@ function getFallbackAnalysis(ticketText) {
   } else if (text.includes("password") || text.includes("reset")) {
     issueType = "Password Reset";
     suggestedTeam = "Support";
-  } else if (text.includes("bill") || text.includes("invoice") || text.includes("charge")) {
+  } else if (text.includes("charger") || text.includes("charging") || (text.includes("charge") && (text.includes("battery") || text.includes("power") || text.includes("plug") || text.includes("cable")))) {
+    issueType = "Hardware Issue";
+    suggestedTeam = "Engineering";
+  } else if (text.includes("bill") || text.includes("invoice") || (text.includes("charge") && (text.includes("credit") || text.includes("payment") || text.includes("card") || text.includes("amount")))) {
     issueType = "Billing";
     suggestedTeam = "Billing";
   } else if (text.includes("feature") || text.includes("request")) {
