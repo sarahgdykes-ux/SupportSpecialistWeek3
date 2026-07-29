@@ -168,6 +168,43 @@ textarea {
   color: var(--accent-strong);
 }
 
+.csv-upload-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.csv-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.csv-upload-btn:hover {
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+.csv-file-name {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.hidden {
+  display: none;
+}
+
 textarea:focus,
 input:focus {
   outline: none;

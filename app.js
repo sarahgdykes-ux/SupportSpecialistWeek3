@@ -22,6 +22,8 @@ const ui = {
   clearButton: document.getElementById("clear-btn"),
   downloadCsvButton: document.getElementById("download-csv-btn"),
   darkModeToggle: document.getElementById("dark-mode-toggle"),
+  csvFileInput: document.getElementById("csv-file-input"),
+  csvFileName: document.getElementById("csv-file-name"),
   placeholder: document.getElementById("results-placeholder"),
   loadingState: document.getElementById("loading-state"),
   errorState: document.getElementById("error-state"),
@@ -92,6 +94,142 @@ function initDarkMode() {
     document.documentElement.classList.add("dark");
     ui.darkModeToggle.querySelector(".dark-mode-icon").textContent = "☀️";
   }
+}
+
+function parseCSV(csvText) {
+  const lines = csvText.split('\n');
+  const headers = lines[0].split(',').map(h => h.trim());
+  const data = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+
+    const values = [];
+    let currentValue = '';
+    let inQuotes = false;
+
+    for (let char of lines[i]) {
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        values.push(currentValue.trim());
+        currentValue = '';
+      } else {
+        currentValue += char;
+      }
+    }
+    values.push(currentValue.trim());
+
+    if (values.length === headers.length) {
+      const row = {};
+      headers.forEach((header, index) => {
+        row[header] = values[index].replace(/^"|"$/g, '');
+      });
+      data.push(row);
+    }
+  }
+
+  return data;
+}
+
+function cleanTicketData(row) {
+  let description = row['Ticket Description'] || '';
+  const product = row['Product Purchased'] || '';
+
+  // Replace {product_purchased} placeholder with actual product name
+  description = description.replace(/\{product_purchased\}/gi, product);
+
+  // Remove common template/garbage text patterns
+  const garbagePatterns = [
+    /I'm having an issue with the \{?product_purchased\}?\s*\.?\s*Please assist\./gi,
+    /I'm facing a problem with my \{?product_purchased\}?\s*\.?\s*/gi,
+    /Your billing zip code is: \d+\./gi,
+    /We appreciate that you have requested a website address\./gi,
+    /Please double check your email address\./gi,
+    /If you need to change an existing product\./gi,
+    /If The issue I'm facing is intermittent\./gi,
+    /Note: The seller is not responsible for any damages.*?shipped to you/gi,
+    /To remove the new \{?product_purch/gi,
+    /Solution \d+\s*/gi,
+    /Product Search: What's New in \d+-\d+-\d+-\d+\?/gi,
+    /Report Feedback Customer Service is your best/gi,
+    /CQW: Why didn't I send him the invoice\? Thanks a lot\./gi,
+    /L: He's like the best customer I've met\./gi,
+    /I can't find the 'Product_IP' field of the/gi,
+    /Product Name: [A-Z0-9]+/gi,
+    /Join Date: [A-Za-z]+ \d+ Posts: \d+/gi,
+    /- Acknowledgement: Thanks to \w+ for the tip\./gi,
+    /\* \[0\] - \[0\] - \[0\] - \[0\]/gi,
+    /Customer Reviewer: [^.]*\./gi,
+    /"" -name ""[^"]*""/gi,
+    /"" -version [\d.]+ ""[\d.]+""/gi,
+    /"" -usage/gi,
+    /The email address should change to: [^,]+, as there is a unique id number unique for each product\./gi,
+    /1\.\d+(\.\d+)?\s*/gi,
+    /\{?product_purchased\}? does not represent the price which you received by the day immediately before the shipment date\./gi,
+    /In many cases, this is the/gi,
+    /\} If we can, please send a ""request"" to [^\s]+/gi,
+    /1-800-\d{3}-\d{4}\./gi,
+    /\d+\.\s+It is possible that we cannot find some type of text or a product name to identify someone like [^.]*\./gi,
+    /\d+\.\s+On the/gi,
+  ];
+
+  garbagePatterns.forEach(pattern => {
+    description = description.replace(pattern, '');
+  });
+
+  // Clean up extra whitespace and line breaks
+  description = description.replace(/\n\s*\n/g, '\n\n');
+  description = description.replace(/^\s+|\s+$/gm, '');
+  description = description.trim();
+
+  // Remove empty lines
+  description = description.replace(/\n\s*\n\s*\n/g, '\n\n');
+
+  return description;
+}
+
+function handleCSVUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  ui.csvFileName.textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const csvText = e.target.result;
+      const data = parseCSV(csvText);
+
+      if (data.length === 0) {
+        showError("No valid data found in CSV file.");
+        return;
+      }
+
+      // Extract ticket descriptions and clean them
+      const tickets = data.map(row => cleanTicketData(row)).filter(t => t.length > 0);
+
+      if (tickets.length === 0) {
+        showError("No valid ticket descriptions found in CSV file.");
+        return;
+      }
+
+      // Populate textarea with cleaned tickets
+      ui.ticketInput.value = tickets.join('\n\n');
+      updateTicketCount();
+      clearResults();
+      ui.ticketInput.focus();
+
+    } catch (error) {
+      showError("Failed to parse CSV file: " + error.message);
+    }
+  };
+
+  reader.onerror = () => {
+    showError("Failed to read the CSV file. Please try again.");
+  };
+
+  reader.readAsText(file);
 }
 
 function handleDragOver(e) {
@@ -530,6 +668,9 @@ function attachEvents() {
 
   // Dark mode toggle
   ui.darkModeToggle.addEventListener("click", toggleDarkMode);
+
+  // CSV file upload
+  ui.csvFileInput.addEventListener("change", handleCSVUpload);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
