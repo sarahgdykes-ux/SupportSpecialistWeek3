@@ -206,16 +206,22 @@ function handleCSVUpload(event) {
         return;
       }
 
-      // Extract ticket descriptions and clean them
-      const tickets = data.map(row => cleanTicketData(row)).filter(t => t.length > 0);
+      // Extract ticket descriptions and clean them, preserving Ticket ID
+      const tickets = data.map(row => ({
+        id: row['Ticket ID'] || '',
+        description: cleanTicketData(row)
+      })).filter(t => t.description.length > 0);
 
       if (tickets.length === 0) {
         showError("No valid ticket descriptions found in CSV file.");
         return;
       }
 
+      // Store ticket IDs for later use
+      ui.ticketInput.dataset.ticketIds = JSON.stringify(tickets.map(t => t.id));
+
       // Populate textarea with cleaned tickets
-      ui.ticketInput.value = tickets.join('\n\n');
+      ui.ticketInput.value = tickets.map(t => t.description).join('\n\n');
       updateTicketCount();
       clearResults();
       ui.ticketInput.focus();
@@ -309,11 +315,12 @@ function escapeCsv(value) {
 }
 
 function resultsToCsv(results) {
-  const headers = ["Ticket", "Issue Type", "Priority", "Suggested Team", "Explanation"];
+  const headers = ["Ticket ID", "Ticket", "Issue Type", "Priority", "Suggested Team", "Explanation"];
   const csvRows = [headers.join(",")];
 
   results.forEach((result) => {
     const row = [
+      escapeCsv(result.ticketId),
       escapeCsv(result.ticket),
       escapeCsv(result.issueType),
       escapeCsv(result.priority),
@@ -409,6 +416,7 @@ function buildResultsMarkup(results) {
                       (result, index) => `
                         <article class="result-card" data-ticket-index="${index}">
                           <div class="result-card-header">
+                            <span class="ticket-id-badge">ID: ${escapeHtml(result.ticketId || (index + 1))}</span>
                             <strong>${escapeHtml(result.ticket || "Ticket")}</strong>
                             <select class="priority-select ${getPriorityBadgeClass(result.priority)}" data-ticket-index="${index}">
                               ${priorityOptions.map(p => `<option value="${escapeHtml(p)}" ${p === result.priority ? 'selected' : ''}>${escapeHtml(p)}</option>`).join('')}
@@ -567,14 +575,21 @@ function getFallbackAnalysis(ticketText) {
 // Analyze tickets using OpenAI API (if key provided) or fallback classifier
 async function analyzeTickets(tickets, apiKey) {
   const results = [];
+  
+  // Get ticket IDs if they were stored from CSV upload
+  const ticketIds = ui.ticketInput.dataset.ticketIds 
+    ? JSON.parse(ui.ticketInput.dataset.ticketIds) 
+    : [];
 
-  for (const ticket of tickets) {
+  for (let i = 0; i < tickets.length; i++) {
+    const ticket = tickets[i];
     try {
       const result = apiKey
         ? await analyzeWithOpenAI(ticket, apiKey)
         : getFallbackAnalysis(ticket);
 
       results.push({
+        ticketId: ticketIds[i] || (i + 1), // Use stored ID or fall back to index + 1
         ticket,
         ...result,
       });

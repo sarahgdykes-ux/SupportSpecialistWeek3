@@ -634,6 +634,22 @@ button:active {
   color: var(--text);
 }
 
+.ticket-id-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+:root.dark.ticket-id-badge {
+  background: var(--accent-strong);
+}
+
 .hidden {
   display: none;
 }
