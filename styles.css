@@ -806,11 +806,16 @@ button:active {
 
 .team-header {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--accent-strong);
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--border);
+  color: var(--text);
+}
+
+.team-ticket-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-left: 4px;
 }
 
 .toggle-icon {

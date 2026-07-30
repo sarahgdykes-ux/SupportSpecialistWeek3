@@ -445,8 +445,8 @@ function buildResultsMarkup(results) {
           .map(
             (team) => `
               <div class="team-section">
-                <button class="team-toggle" aria-expanded="true" data-team="${escapeHtml(team)}">
-                  <h4 class="team-header">${escapeHtml(team)}</h4>
+                <button class="team-toggle" aria-expanded="false" data-team="${escapeHtml(team)}">
+                  <h4 class="team-header">${escapeHtml(team)} <span class="team-ticket-count">(${groupedByTeam[team].length})</span></h4>
                   <span class="toggle-icon">▼</span>
                 </button>
                 <div class="team-tickets">
