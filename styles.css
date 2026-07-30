@@ -14,9 +14,9 @@
 :root.dark {
   color-scheme: dark;
   --bg: #0c4A6E;
-  --panel: #164E63;
-  --text: #ecfeff;
-  --muted: #a5f3fc;
+  --panel: #164055;
+  --text: #f0f9ff;
+  --muted: #bae6fd;
   --accent: #22d3ee;
   --accent-strong: #06b6d4;
   --border: #155e75;
