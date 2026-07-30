@@ -400,6 +400,22 @@ button:active {
   font-size: 0.9rem;
 }
 
+.search-container {
+  margin-bottom: 16px;
+}
+
+.search-container label {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+#ticket-search {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  min-height: auto;
+  margin-bottom: 0;
+}
+
 .results-list {
   display: grid;
   gap: 20px;

@@ -27,6 +27,8 @@ const ui = {
   placeholder: document.getElementById("results-placeholder"),
   loadingState: document.getElementById("loading-state"),
   errorState: document.getElementById("error-state"),
+  searchContainer: document.getElementById("search-container"),
+  ticketSearch: document.getElementById("ticket-search"),
   resultsCard: document.getElementById("results-card"),
 };
 
@@ -51,8 +53,10 @@ function clearResults() {
   ui.placeholder.classList.remove("hidden");
   ui.resultsCard.classList.add("hidden");
   ui.errorState.classList.add("hidden");
+  ui.searchContainer.classList.add("hidden");
   ui.downloadCsvButton.classList.add("hidden");
   ui.resultsCard.innerHTML = "";
+  ui.ticketSearch.value = "";
 }
 
 function loadExampleTickets() {
@@ -458,8 +462,36 @@ function renderResults(resultOrResults) {
   ui.resultsCard.innerHTML = buildResultsMarkup(normalized);
   ui.resultsCard.classList.remove("hidden");
   ui.placeholder.classList.add("hidden");
+  ui.searchContainer.classList.remove("hidden");
   ui.downloadCsvButton.classList.remove("hidden");
   ui.downloadCsvButton.dataset.results = JSON.stringify(normalized);
+  ui.ticketSearch.dataset.allResults = JSON.stringify(normalized);
+}
+
+function filterResults(searchTerm) {
+  const allResults = JSON.parse(ui.ticketSearch.dataset.allResults || "[]");
+  
+  if (!searchTerm.trim()) {
+    ui.resultsCard.innerHTML = buildResultsMarkup(allResults);
+    return;
+  }
+  
+  const term = searchTerm.toLowerCase();
+  const filtered = allResults.filter(result => {
+    const ticketId = String(result.ticketId || "").toLowerCase();
+    const ticket = (result.ticket || "").toLowerCase();
+    const issueType = (result.issueType || "").toLowerCase();
+    const priority = (result.priority || "").toLowerCase();
+    const team = (result.suggestedTeam || "").toLowerCase();
+    
+    return ticketId.includes(term) || 
+           ticket.includes(term) || 
+           issueType.includes(term) ||
+           priority.includes(term) ||
+           team.includes(term);
+  });
+  
+  ui.resultsCard.innerHTML = buildResultsMarkup(filtered);
 }
 
 // Call the OpenAI chat completions API when an API key is provided.
@@ -689,6 +721,11 @@ function attachEvents() {
 
   // CSV file upload
   ui.csvFileInput.addEventListener("change", handleCSVUpload);
+
+  // Search functionality
+  ui.ticketSearch.addEventListener("input", (e) => {
+    filterResults(e.target.value);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
