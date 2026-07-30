@@ -43,20 +43,23 @@ body {
 .app-shell {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 32px 20px 48px;
+  padding: 12px 20px 12px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .hero {
   background: linear-gradient(90deg, var(--accent) 0%, #0e7490 100%);
   color: rgb(250, 250, 251);
-  padding: 28px 32px;
-  border-radius: 24px;
+  padding: 16px 20px;
+  border-radius: 16px;
   box-shadow: var(--shadow);
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .hero-content {
@@ -67,13 +70,13 @@ body {
 }
 
 .techflow-logo {
-  height: 100px;
+  height: 50px;
   width: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-  padding: 12px 20px;
+  padding: 6px 12px;
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  border-radius: 8px;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
@@ -114,59 +117,101 @@ body {
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 0.8rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  margin: 0 0 10px;
+  margin: 0 0 6px;
   opacity: 0.9;
 }
 
 .hero h1 {
-  margin: 0 0 8px;
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin: 0 0 4px;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
 }
 
 .hero p {
   margin: 0;
-  font-size: 1rem;
-  max-width: 700px;
-  line-height: 1.6;
+  font-size: 0.85rem;
+  max-width: 500px;
+  line-height: 1.4;
   opacity: 0.95;
 }
 
 .dashboard {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
 }
 
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 24px;
-  padding: 24px;
+  padding: 16px;
   box-shadow: var(--shadow);
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.results-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  min-height: 0;
+  flex: 1;
+}
+
+.results-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+
+.results-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.results-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.results-scroll-container::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.results-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
 }
 
 .form-panel h2,
 .results-panel h2 {
   margin-top: 0;
-  margin-bottom: 16px;
-  font-size: 1.2rem;
+  margin-bottom: 8px;
+  font-size: 1rem;
 }
 
 label {
   display: block;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  color: var(--text);
 }
 
 textarea,
 input {
   width: 100%;
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 16px;
+  padding: 8px 12px;
   font: inherit;
   color: var(--text);
   background: #94d5e6;
@@ -179,18 +224,18 @@ input {
 }
 
 textarea {
-  min-height: 220px;
+  min-height: 80px;
   resize: vertical;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .ticket-count {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.9rem;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
   color: var(--muted);
-  margin-bottom: 16px;
 }
 
 #ticket-count-value {
@@ -267,9 +312,9 @@ textarea.drag-over {
 button {
   border: none;
   border-radius: 999px;
-  padding: 12px 18px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.2s ease;
 }
@@ -365,8 +410,8 @@ button:active {
 
 .results-card {
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 10px;
   background: linear-gradient(160deg, #a7bdd7 0%, #f9fbff 100%);
   transition: background 0.3s ease, border-color 0.3s ease;
 }
@@ -400,7 +445,7 @@ button:active {
 
 .results-stack {
   display: grid;
-  gap: 14px;
+  gap: 8px;
 }
 
 .results-header {
@@ -496,11 +541,11 @@ button:active {
 }
 
 .statistics-dashboard {
-  margin-bottom: 20px;
-  padding: 20px;
+  margin-bottom: 8px;
+  padding: 12px;
   background: linear-gradient(160deg, #ffffff 0%, #f9fbff 100%);
   border: 1px solid var(--border);
-  border-radius: 18px;
+  border-radius: 12px;
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 
@@ -513,40 +558,40 @@ button:active {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 2px solid var(--border);
 }
 
 .stats-header h3 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--accent-strong);
 }
 
 .stats-total {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--muted);
   font-weight: 600;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
 .stat-card {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 8px;
+  padding: 8px;
 }
 
 .stat-card h4 {
-  margin: 0 0 12px;
-  font-size: 0.95rem;
+  margin: 0 0 6px;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text);
 }
@@ -554,18 +599,18 @@ button:active {
 .stat-bars {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .stat-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
 .stat-label {
-  min-width: 100px;
-  font-size: 0.85rem;
+  min-width: 70px;
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--text);
   text-align: left;
@@ -679,12 +724,12 @@ button:active {
 
 .results-list {
   display: grid;
-  gap: 20px;
+  gap: 8px;
 }
 
 .team-section {
   display: grid;
-  gap: 12px;
+  gap: 6px;
 }
 
 .team-toggle {
@@ -735,8 +780,8 @@ button:active {
 
 .result-card {
   border: 1px solid #edf2f7;
-  border-radius: 16px;
-  padding: 14px;
+  border-radius: 8px;
+  padding: 8px;
   background: #adc2ed;
   transition: background 0.3s ease, border-color 0.3s ease;
 }
@@ -750,8 +795,8 @@ button:active {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .ticket-description-wrapper {
@@ -763,8 +808,9 @@ button:active {
 
 .ticket-description {
   color: var(--text);
-  line-height: 1.4;
+  line-height: 1.2;
   word-break: break-word;
+  font-size: 0.8rem;
 }
 
 .ticket-description.collapsed {
@@ -776,11 +822,11 @@ button:active {
   background: none;
   border: none;
   color: var(--accent);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 600;
   cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
   transition: all 0.2s ease;
 }
 
@@ -885,12 +931,12 @@ button:active {
 
 .result-grid {
   display: grid;
-  gap: 14px;
+  gap: 6px;
 }
 
 .result-item {
   border-bottom: 1px solid #edf2f7;
-  padding-bottom: 10px;
+  padding-bottom: 4px;
   transition: border-color 0.3s ease;
 }
 
@@ -905,18 +951,20 @@ button:active {
 
 .result-item strong {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   color: var(--text);
+  font-size: 0.75rem;
 }
 
 .result-item span {
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.3;
+  font-size: 0.75rem;
 }
 
 .result-actions {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 6px;
+  padding-top: 6px;
   border-top: 1px solid #edf2f7;
 }
 
@@ -926,12 +974,12 @@ button:active {
 
 .send-ticket-btn {
   width: 100%;
-  padding: 8px 16px;
+  padding: 6px 12px;
   background: var(--accent);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -997,13 +1045,13 @@ button:active {
 
 .ticket-id-badge {
   display: inline-block;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 2px 6px;
   background: var(--accent);
   color: white;
+  border-radius: 4px;
+  font-size: 0.65rem;
   font-weight: 700;
-  font-size: 0.8rem;
-  margin-right: 8px;
+  margin-right: 6px;
   white-space: nowrap;
 }
 
