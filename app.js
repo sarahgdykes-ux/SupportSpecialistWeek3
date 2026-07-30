@@ -32,6 +32,7 @@ const ui = {
   bulkActions: document.getElementById("bulk-actions"),
   selectAllBtn: document.getElementById("select-all-btn"),
   sendSelectedBtn: document.getElementById("send-selected-btn"),
+  statisticsDashboard: document.getElementById("statistics-dashboard"),
   resultsCard: document.getElementById("results-card"),
 };
 
@@ -58,6 +59,7 @@ function clearResults() {
   ui.errorState.classList.add("hidden");
   ui.searchContainer.classList.add("hidden");
   ui.bulkActions.classList.add("hidden");
+  ui.statisticsDashboard.classList.add("hidden");
   ui.downloadCsvButton.classList.add("hidden");
   ui.resultsCard.innerHTML = "";
   ui.ticketSearch.value = "";
@@ -469,6 +471,12 @@ function buildResultsMarkup(results) {
 function renderResults(resultOrResults) {
   const entries = Array.isArray(resultOrResults) ? resultOrResults : [resultOrResults];
   const normalized = entries.map((entry, index) => normalizeResult(entry, entry.ticket || entry.ticketText || ""));
+  
+  // Calculate and render statistics
+  const stats = calculateStatistics(normalized);
+  ui.statisticsDashboard.innerHTML = renderStatistics(stats);
+  ui.statisticsDashboard.classList.remove("hidden");
+  
   ui.resultsCard.innerHTML = buildResultsMarkup(normalized);
   ui.resultsCard.classList.remove("hidden");
   ui.placeholder.classList.add("hidden");
@@ -516,6 +524,92 @@ function updateSelectedCount() {
   // Update select all button text
   const allChecked = selected === checkboxes.length && checkboxes.length > 0;
   ui.selectAllBtn.textContent = allChecked ? 'Deselect All' : 'Select All';
+}
+
+function calculateStatistics(results) {
+  const stats = {
+    total: results.length,
+    byTeam: {},
+    byPriority: {},
+    byIssueType: {},
+    sent: 0
+  };
+
+  results.forEach(result => {
+    // Count by team
+    const team = result.suggestedTeam || 'Unknown';
+    stats.byTeam[team] = (stats.byTeam[team] || 0) + 1;
+
+    // Count by priority
+    const priority = result.priority || 'Unknown';
+    stats.byPriority[priority] = (stats.byPriority[priority] || 0) + 1;
+
+    // Count by issue type
+    const issueType = result.issueType || 'Unknown';
+    stats.byIssueType[issueType] = (stats.byIssueType[issueType] || 0) + 1;
+  });
+
+  return stats;
+}
+
+function renderStatistics(stats) {
+  const teamEntries = Object.entries(stats.byTeam).sort((a, b) => b[1] - a[1]);
+  const priorityEntries = Object.entries(stats.byPriority).sort((a, b) => b[1] - a[1]);
+  const issueEntries = Object.entries(stats.byIssueType).sort((a, b) => b[1] - a[1]);
+
+  const maxTeamCount = Math.max(...teamEntries.map(([, count]) => count), 1);
+  const maxPriorityCount = Math.max(...priorityEntries.map(([, count]) => count), 1);
+
+  return `
+    <div class="stats-header">
+      <h3>Statistics Dashboard</h3>
+      <span class="stats-total">${stats.total} ticket${stats.total === 1 ? '' : 's'}</span>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h4>Tickets by Team</h4>
+        <div class="stat-bars">
+          ${teamEntries.map(([team, count]) => `
+            <div class="stat-bar">
+              <span class="stat-label">${escapeHtml(team)}</span>
+              <div class="stat-bar-container">
+                <div class="stat-bar-fill" style="width: ${(count / maxTeamCount) * 100}%"></div>
+              </div>
+              <span class="stat-value">${count}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="stat-card">
+        <h4>Tickets by Priority</h4>
+        <div class="stat-bars">
+          ${priorityEntries.map(([priority, count]) => `
+            <div class="stat-bar">
+              <span class="stat-label priority-${priority.toLowerCase()}">${escapeHtml(priority)}</span>
+              <div class="stat-bar-container">
+                <div class="stat-bar-fill priority-${priority.toLowerCase()}" style="width: ${(count / maxPriorityCount) * 100}%"></div>
+              </div>
+              <span class="stat-value">${count}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="stat-card">
+        <h4>Tickets by Issue Type</h4>
+        <div class="stat-bars">
+          ${issueEntries.map(([issue, count]) => `
+            <div class="stat-bar">
+              <span class="stat-label">${escapeHtml(issue)}</span>
+              <div class="stat-bar-container">
+                <div class="stat-bar-fill" style="width: ${(count / stats.total) * 100}%"></div>
+              </div>
+              <span class="stat-value">${count}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 // Call the OpenAI chat completions API when an API key is provided.
