@@ -25,84 +25,86 @@
         </button>
       </header>
 
-      <nav class="nav-bar">
-        <button class="nav-tab active" data-view="form">Input</button>
-        <button class="nav-tab" data-view="results">Results</button>
-        <button class="nav-tab" data-view="statistics">Statistics</button>
-      </nav>
+      <div class="main-layout">
+        <nav class="nav-bar">
+          <button class="nav-tab active" data-view="form">Input</button>
+          <button class="nav-tab" data-view="results">Results</button>
+          <button class="nav-tab" data-view="statistics">Statistics</button>
+        </nav>
 
-      <main class="dashboard">
-        <section class="panel form-panel" aria-labelledby="ticket-form-title" id="form-panel">
-          <h2 id="ticket-form-title">Analyze a Ticket</h2>
-          <label for="ticket-input">Support Tickets</label>
-          <textarea
-            id="ticket-input"
-            rows="10"
-            placeholder="Example ticket format:
+        <main class="dashboard">
+          <section class="panel form-panel" aria-labelledby="ticket-form-title" id="form-panel">
+            <h2 id="ticket-form-title">Analyze a Ticket</h2>
+            <label for="ticket-input">Support Tickets</label>
+            <textarea
+              id="ticket-input"
+              rows="10"
+              placeholder="Example ticket format:
 
 I cannot log into my account. I've tried resetting my password but I'm not receiving the reset email.
 
 The application is running very slow today. Page load times are taking 10+ seconds.
 
 Paste multiple tickets separated by a blank line..."
-          ></textarea>
-          <div class="ticket-count">
-            <span id="ticket-count-value">0</span> ticket(s)
-          </div>
-          <div class="csv-upload-section">
-            <label for="csv-file-input" class="csv-upload-btn">
-              <span>📁 Upload CSV</span>
-            </label>
-            <input type="file" id="csv-file-input" accept=".csv" class="hidden" />
-            <span id="csv-file-name" class="csv-file-name"></span>
-          </div>
+            ></textarea>
+            <div class="ticket-count">
+              <span id="ticket-count-value">0</span> ticket(s)
+            </div>
+            <div class="csv-upload-section">
+              <label for="csv-file-input" class="csv-upload-btn">
+                <span>📁 Upload CSV</span>
+              </label>
+              <input type="file" id="csv-file-input" accept=".csv" class="hidden" />
+              <span id="csv-file-name" class="csv-file-name"></span>
+            </div>
 
-          <label for="api-key">OpenAI API key (optional)</label>
-          <input
-            id="api-key"
-            type="password"
-            placeholder="Optional: use your OpenAI API key"
-          />
+            <label for="api-key">OpenAI API key (optional)</label>
+            <input
+              id="api-key"
+              type="password"
+              placeholder="Optional: use your OpenAI API key"
+            />
 
-          <div class="button-row">
-            <button id="analyze-btn" type="button">Analyze Tickets</button>
-            <button id="try-example-btn" class="secondary" type="button">Try Example</button>
-            <button id="clear-btn" class="secondary" type="button">Clear</button>
-          </div>
+            <div class="button-row">
+              <button id="analyze-btn" type="button">Analyze Tickets</button>
+              <button id="try-example-btn" class="secondary" type="button">Try Example</button>
+              <button id="clear-btn" class="secondary" type="button">Clear</button>
+            </div>
 
-          <p class="helper-text">
-            Enter multiple tickets at once and the app will sort them into a priority queue.
-            If no API key is provided, the app uses a built-in fallback classifier so you can still explore the experience.
-          </p>
-        </section>
+            <p class="helper-text">
+              Enter multiple tickets at once and the app will sort them into a priority queue.
+              If no API key is provided, the app uses a built-in fallback classifier so you can still explore the experience.
+            </p>
+          </section>
 
-        <section class="panel results-panel" aria-live="polite" id="results-panel" style="display: none;">
-          <div id="results-placeholder" class="results-placeholder">
-            Your analysis will appear here.
-          </div>
-          <div id="loading-state" class="loading-state hidden" role="status">
-            <span class="spinner"></span>
-            <span>Analyzing ticket…</span>
-          </div>
-          <div id="error-state" class="error-state hidden"></div>
-          <div id="search-container" class="search-container hidden">
-            <label for="ticket-search">Search Tickets</label>
-            <input type="text" id="ticket-search" placeholder="Search by ID, description, or issue type..." />
-          </div>
-          <div id="bulk-actions" class="bulk-actions hidden">
-            <button id="select-all-btn" class="bulk-btn secondary" type="button">Select All</button>
-            <button id="send-selected-btn" class="bulk-btn" type="button">Send Selected (0)</button>
-          </div>
-          <div class="results-scroll-container">
-            <div id="results-card" class="results-card hidden"></div>
-          </div>
-          <button id="download-csv-btn" class="download-csv-btn hidden" type="button">Download CSV</button>
-        </section>
+          <section class="panel results-panel" aria-live="polite" id="results-panel" style="display: none;">
+            <div id="results-placeholder" class="results-placeholder">
+              Your analysis will appear here.
+            </div>
+            <div id="loading-state" class="loading-state hidden" role="status">
+              <span class="spinner"></span>
+              <span>Analyzing ticket…</span>
+            </div>
+            <div id="error-state" class="error-state hidden"></div>
+            <div id="search-container" class="search-container hidden">
+              <label for="ticket-search">Search Tickets</label>
+              <input type="text" id="ticket-search" placeholder="Search by ID, description, or issue type..." />
+            </div>
+            <div id="bulk-actions" class="bulk-actions hidden">
+              <button id="select-all-btn" class="bulk-btn secondary" type="button">Select All</button>
+              <button id="send-selected-btn" class="bulk-btn" type="button">Send Selected (0)</button>
+            </div>
+            <div class="results-scroll-container">
+              <div id="results-card" class="results-card hidden"></div>
+            </div>
+            <button id="download-csv-btn" class="download-csv-btn hidden" type="button">Download CSV</button>
+          </section>
 
-        <section class="panel statistics-panel" aria-live="polite" id="statistics-panel" style="display: none;">
-          <div id="statistics-dashboard" class="statistics-dashboard hidden"></div>
-        </section>
-      </main>
+          <section class="panel statistics-panel" aria-live="polite" id="statistics-panel" style="display: none;">
+            <div id="statistics-dashboard" class="statistics-dashboard hidden"></div>
+          </section>
+        </main>
+      </div>
     </div>
 
     <script src="app.js"></script>
