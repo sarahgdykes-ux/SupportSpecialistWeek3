@@ -854,33 +854,33 @@ button:active {
 }
 
 :root.dark.priority-select.critical {
-  background: #7f1d1d;
-  color: #fca5a5;
-  border-color: #991b1b;
+  background: #991b1b;
+  color: #fecaca;
+  border-color: #b91c1c;
 }
 
 :root.dark.priority-select.high {
-  background: #7c2d12;
+  background: #9a3412;
   color: #fdba74;
-  border-color: #9a3412;
+  border-color: #c2410c;
 }
 
 :root.dark.priority-select.medium {
-  background: #78350f;
+  background: #92400e;
   color: #fcd34d;
-  border-color: #92400e;
+  border-color: #b45309;
 }
 
 :root.dark.priority-select.low {
-  background: #14532d;
+  background: #166534;
   color: #86efac;
-  border-color: #166534;
+  border-color: #15803d;
 }
 
 :root.dark.priority-select:not(.critical):not(.high):not(.medium):not(.low),
 :root.dark.team-select {
-  background: #0f172a;
-  border-color: #334155;
+  background: #1e4d5f;
+  border-color: #155e75;
 }
 
 .result-grid {
