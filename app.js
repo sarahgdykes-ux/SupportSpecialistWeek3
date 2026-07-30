@@ -423,12 +423,20 @@ function buildResultsMarkup(results) {
                 <div class="team-tickets">
                   ${groupedByTeam[team]
                     .map(
-                      (result, index) => `
+                      (result, index) => {
+                        const ticketText = result.ticket || "";
+                        const isLong = ticketText.length > 100;
+                        const previewText = isLong ? ticketText.substring(0, 100) + "..." : ticketText;
+                        
+                        return `
                         <article class="result-card" data-ticket-index="${index}">
                           <div class="result-card-header">
                             <input type="checkbox" class="ticket-checkbox" data-ticket-index="${index}" />
                             <span class="ticket-id-badge">ID: ${escapeHtml(result.ticketId || (index + 1))}</span>
-                            <strong>${escapeHtml(result.ticket || "Ticket")}</strong>
+                            <div class="ticket-description-wrapper">
+                              <strong class="ticket-description ${isLong ? 'collapsed' : ''}" data-full-text="${escapeHtml(ticketText)}">${escapeHtml(previewText)}</strong>
+                              ${isLong ? `<button class="expand-toggle" data-ticket-index="${index}">Show more</button>` : ''}
+                            </div>
                             <select class="priority-select ${getPriorityBadgeClass(result.priority)}" data-ticket-index="${index}">
                               ${priorityOptions.map(p => `<option value="${escapeHtml(p)}" ${p === result.priority ? 'selected' : ''}>${escapeHtml(p)}</option>`).join('')}
                             </select>
@@ -455,7 +463,8 @@ function buildResultsMarkup(results) {
                             </button>
                           </div>
                         </article>
-                      `
+                      `;
+                      }
                     )
                     .join("")}
                 </div>
@@ -929,6 +938,23 @@ function attachEvents() {
         e.target.textContent = "Sent ✓";
         e.target.disabled = true;
         e.target.classList.add("sent");
+      }
+    }
+    
+    // Expand/collapse toggle
+    if (e.target.classList.contains("expand-toggle")) {
+      const descriptionEl = e.target.previousElementSibling;
+      const fullText = descriptionEl.dataset.fullText;
+      
+      if (e.target.textContent === "Show more") {
+        descriptionEl.textContent = fullText;
+        descriptionEl.classList.remove("collapsed");
+        e.target.textContent = "Show less";
+      } else {
+        const previewText = fullText.substring(0, 100) + "...";
+        descriptionEl.textContent = previewText;
+        descriptionEl.classList.add("collapsed");
+        e.target.textContent = "Show more";
       }
     }
   });

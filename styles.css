@@ -725,6 +725,44 @@ button:active {
   margin-bottom: 10px;
 }
 
+.ticket-description-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ticket-description {
+  color: var(--text);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.ticket-description.collapsed {
+  max-height: none;
+}
+
+.expand-toggle {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.expand-toggle:hover {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+:root.dark.expand-toggle:hover {
+  background: rgba(234, 63, 247, 0.1);
+}
+
 @media (max-width: 480px) {
   result-card-header {
     flex-direction: column;
