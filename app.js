@@ -29,6 +29,9 @@ const ui = {
   errorState: document.getElementById("error-state"),
   searchContainer: document.getElementById("search-container"),
   ticketSearch: document.getElementById("ticket-search"),
+  bulkActions: document.getElementById("bulk-actions"),
+  selectAllBtn: document.getElementById("select-all-btn"),
+  sendSelectedBtn: document.getElementById("send-selected-btn"),
   resultsCard: document.getElementById("results-card"),
 };
 
@@ -54,6 +57,7 @@ function clearResults() {
   ui.resultsCard.classList.add("hidden");
   ui.errorState.classList.add("hidden");
   ui.searchContainer.classList.add("hidden");
+  ui.bulkActions.classList.add("hidden");
   ui.downloadCsvButton.classList.add("hidden");
   ui.resultsCard.innerHTML = "";
   ui.ticketSearch.value = "";
@@ -420,6 +424,7 @@ function buildResultsMarkup(results) {
                       (result, index) => `
                         <article class="result-card" data-ticket-index="${index}">
                           <div class="result-card-header">
+                            <input type="checkbox" class="ticket-checkbox" data-ticket-index="${index}" />
                             <span class="ticket-id-badge">ID: ${escapeHtml(result.ticketId || (index + 1))}</span>
                             <strong>${escapeHtml(result.ticket || "Ticket")}</strong>
                             <select class="priority-select ${getPriorityBadgeClass(result.priority)}" data-ticket-index="${index}">
@@ -468,9 +473,11 @@ function renderResults(resultOrResults) {
   ui.resultsCard.classList.remove("hidden");
   ui.placeholder.classList.add("hidden");
   ui.searchContainer.classList.remove("hidden");
+  ui.bulkActions.classList.remove("hidden");
   ui.downloadCsvButton.classList.remove("hidden");
   ui.downloadCsvButton.dataset.results = JSON.stringify(normalized);
   ui.ticketSearch.dataset.allResults = JSON.stringify(normalized);
+  updateSelectedCount();
 }
 
 function filterResults(searchTerm) {
@@ -478,6 +485,7 @@ function filterResults(searchTerm) {
   
   if (!searchTerm.trim()) {
     ui.resultsCard.innerHTML = buildResultsMarkup(allResults);
+    updateSelectedCount();
     return;
   }
   
@@ -497,6 +505,17 @@ function filterResults(searchTerm) {
   });
   
   ui.resultsCard.innerHTML = buildResultsMarkup(filtered);
+  updateSelectedCount();
+}
+
+function updateSelectedCount() {
+  const checkboxes = document.querySelectorAll('.ticket-checkbox');
+  const selected = Array.from(checkboxes).filter(cb => cb.checked).length;
+  ui.sendSelectedBtn.textContent = `Send Selected (${selected})`;
+  
+  // Update select all button text
+  const allChecked = selected === checkboxes.length && checkboxes.length > 0;
+  ui.selectAllBtn.textContent = allChecked ? 'Deselect All' : 'Select All';
 }
 
 // Call the OpenAI chat completions API when an API key is provided.
@@ -730,6 +749,74 @@ function attachEvents() {
   // Search functionality
   ui.ticketSearch.addEventListener("input", (e) => {
     filterResults(e.target.value);
+  });
+
+  // Checkbox change events
+  ui.resultsCard.addEventListener("change", (e) => {
+    if (e.target.classList.contains("ticket-checkbox")) {
+      updateSelectedCount();
+    }
+  });
+
+  // Select All / Deselect All
+  ui.selectAllBtn.addEventListener("click", () => {
+    const checkboxes = document.querySelectorAll('.ticket-checkbox');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    
+    checkboxes.forEach(cb => {
+      cb.checked = !allChecked;
+    });
+    
+    updateSelectedCount();
+  });
+
+  // Send Selected
+  ui.sendSelectedBtn.addEventListener("click", () => {
+    const checkboxes = document.querySelectorAll('.ticket-checkbox:checked');
+    const results = JSON.parse(ui.downloadCsvButton.dataset.results || "[]");
+    
+    if (checkboxes.length === 0) {
+      alert("Please select at least one ticket to send.");
+      return;
+    }
+    
+    const selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.ticketIndex));
+    const sentTickets = [];
+    
+    selectedIndices.forEach(index => {
+      if (results[index]) {
+        sentTickets.push({
+          id: results[index].ticketId,
+          team: results[index].suggestedTeam
+        });
+        
+        // Update the individual send button
+        const sendBtn = document.querySelector(`.send-ticket-btn[data-ticket-index="${index}"]`);
+        if (sendBtn) {
+          sendBtn.textContent = "Sent ✓";
+          sendBtn.disabled = true;
+          sendBtn.classList.add("sent");
+        }
+        
+        // Uncheck the checkbox
+        checkboxes.find(cb => parseInt(cb.dataset.ticketIndex) === index).checked = false;
+      }
+    });
+    
+    updateSelectedCount();
+    
+    // Show confirmation
+    const teamGroups = sentTickets.reduce((acc, ticket) => {
+      acc[ticket.team] = (acc[ticket.team] || 0) + 1;
+      return acc;
+    }, {});
+    
+    const message = Object.entries(teamGroups)
+      .map(([team, count]) => `${count} ticket(s) to ${team}`)
+      .join(', ');
+    
+    alert(`Sent: ${message} (placeholder)`);
+    console.log("Sent tickets:", sentTickets);
   });
 
   // Send ticket button functionality

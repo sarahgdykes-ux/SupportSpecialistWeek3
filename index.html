@@ -80,6 +80,10 @@ Paste multiple tickets separated by a blank line..."
             <label for="ticket-search">Search Tickets</label>
             <input type="text" id="ticket-search" placeholder="Search by ID, description, or issue type..." />
           </div>
+          <div id="bulk-actions" class="bulk-actions hidden">
+            <button id="select-all-btn" class="bulk-btn secondary" type="button">Select All</button>
+            <button id="send-selected-btn" class="bulk-btn" type="button">Send Selected (0)</button>
+          </div>
           <div id="results-card" class="results-card hidden"></div>
           <button id="download-csv-btn" class="download-csv-btn hidden" type="button">Download CSV</button>
         </section>

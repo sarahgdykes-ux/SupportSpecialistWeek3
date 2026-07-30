@@ -416,6 +416,56 @@ button:active {
   margin-bottom: 0;
 }
 
+.bulk-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.bulk-btn {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bulk-btn:not(.secondary) {
+  background: var(--accent);
+  color: white;
+}
+
+.bulk-btn:not(.secondary):hover {
+  background: var(--accent-strong);
+  transform: translateY(-1px);
+}
+
+.bulk-btn.secondary {
+  background: #e8eefc;
+  color: var(--accent-strong);
+}
+
+.bulk-btn.secondary:hover {
+  background: var(--bg);
+}
+
+.bulk-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ticket-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
 .results-list {
   display: grid;
   gap: 20px;
