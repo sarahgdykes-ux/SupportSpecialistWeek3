@@ -442,6 +442,11 @@ function buildResultsMarkup(results) {
                               <span>${escapeHtml(result.explanation)}</span>
                             </div>
                           </div>
+                          <div class="result-actions">
+                            <button class="send-ticket-btn" data-ticket-index="${index}" data-team="${escapeHtml(result.suggestedTeam)}">
+                              Send to ${escapeHtml(result.suggestedTeam)}
+                            </button>
+                          </div>
                         </article>
                       `
                     )
@@ -725,6 +730,26 @@ function attachEvents() {
   // Search functionality
   ui.ticketSearch.addEventListener("input", (e) => {
     filterResults(e.target.value);
+  });
+
+  // Send ticket button functionality
+  ui.resultsCard.addEventListener("click", (e) => {
+    if (e.target.classList.contains("send-ticket-btn")) {
+      const ticketIndex = e.target.dataset.ticketIndex;
+      const team = e.target.dataset.team;
+      const results = JSON.parse(ui.downloadCsvButton.dataset.results || "[]");
+      
+      if (results[ticketIndex]) {
+        // Placeholder send function
+        console.log(`Sending ticket ID ${results[ticketIndex].ticketId} to ${team}`);
+        alert(`Ticket ID ${results[ticketIndex].ticketId} has been sent to ${team} (placeholder)`);
+        
+        // Visual feedback
+        e.target.textContent = "Sent ✓";
+        e.target.disabled = true;
+        e.target.classList.add("sent");
+      }
+    }
   });
 }
 

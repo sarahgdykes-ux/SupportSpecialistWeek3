@@ -615,6 +615,52 @@ button:active {
   line-height: 1.6;
 }
 
+.result-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #edf2f7;
+}
+
+:root.dark.result-actions {
+  border-top-color: #334155;
+}
+
+.send-ticket-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.send-ticket-btn:hover:not(:disabled) {
+  background: var(--accent-strong);
+  transform: translateY(-1px);
+}
+
+.send-ticket-btn:disabled {
+  background: #22c55e;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+:root.dark.send-ticket-btn:disabled {
+  background: #16a34a;
+}
+
+.send-ticket-btn.sent {
+  background: #22c55e;
+}
+
+:root.dark.send-ticket-btn.sent {
+  background: #16a34a;
+}
+
 .badge {
   display: inline-block;
   padding: 6px 10px;
