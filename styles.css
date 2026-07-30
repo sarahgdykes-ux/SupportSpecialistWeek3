@@ -15,7 +15,7 @@
   color-scheme: dark;
   --bg: #0c4A6E;
   --panel: #164055;
-  --text: #0905f2;
+  --text: #4edfe6;
   --muted: #059ff2;
   --accent: #22d3ee;
   --accent-strong: #06b6d4;
@@ -31,7 +31,7 @@
 body {
   margin: 0;
   font-family: Inter, "Segoe UI", Roboto, sans-serif;
-  background: linear-gradient(135deg, #eef4ff 0%, var(--bg) 100%);
+  background: linear-gradient(135deg, #a0bef5 0%, var(--bg) 100%);
   color: var(--text);
   transition: background 0.3s ease, color 0.3s ease;
 }
@@ -48,7 +48,7 @@ body {
 
 .hero {
   background: linear-gradient(90deg, var(--accent) 0%, #0e7490 100%);
-  color: white;
+  color: rgb(126, 194, 242);
   padding: 28px 32px;
   border-radius: 24px;
   box-shadow: var(--shadow);
@@ -169,7 +169,7 @@ input {
   padding: 14px 16px;
   font: inherit;
   color: var(--text);
-  background: #fbfdff;
+  background: #94d5e6;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.3s ease, color 0.3s ease;
 }
 
@@ -244,7 +244,7 @@ input:focus {
 
 textarea.drag-over {
   border-color: var(--accent);
-  background: #eef4ff;
+  background: #9db8eb;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
 }
 
@@ -308,7 +308,7 @@ button:active {
   border: 1px dashed var(--border);
   border-radius: 18px;
   color: var(--muted);
-  background: #f9fbff;
+  background: #81a3e6;
   min-height: 220px;
   display: grid;
   place-items: center;
@@ -331,7 +331,7 @@ button:active {
 }
 
 .loading-state {
-  background: #eef4ff;
+  background: #93a8d0;
   color: var(--accent-strong);
 }
 
@@ -367,7 +367,7 @@ button:active {
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 20px;
-  background: linear-gradient(160deg, #ffffff 0%, #f9fbff 100%);
+  background: linear-gradient(160deg, #a7bdd7 0%, #f9fbff 100%);
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 
@@ -379,7 +379,7 @@ button:active {
   margin-top: 16px;
   width: 100%;
   background: var(--accent);
-  color: white;
+  color: rgb(165, 190, 207);
   padding: 12px 18px;
   border: none;
   border-radius: 999px;
@@ -464,7 +464,7 @@ button:active {
 
 .bulk-btn:not(.secondary) {
   background: var(--accent);
-  color: white;
+  color: rgb(196, 214, 235);
 }
 
 .bulk-btn:not(.secondary):hover {
@@ -737,7 +737,7 @@ button:active {
   border: 1px solid #edf2f7;
   border-radius: 16px;
   padding: 14px;
-  background: #fcfdff;
+  background: #adc2ed;
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 
