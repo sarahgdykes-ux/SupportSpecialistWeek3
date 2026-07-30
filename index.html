@@ -28,6 +28,7 @@
       <nav class="nav-bar">
         <button class="nav-tab active" data-view="form">Input</button>
         <button class="nav-tab" data-view="results">Results</button>
+        <button class="nav-tab" data-view="statistics">Statistics</button>
       </nav>
 
       <main class="dashboard">
@@ -92,11 +93,14 @@ Paste multiple tickets separated by a blank line..."
             <button id="select-all-btn" class="bulk-btn secondary" type="button">Select All</button>
             <button id="send-selected-btn" class="bulk-btn" type="button">Send Selected (0)</button>
           </div>
-          <div id="statistics-dashboard" class="statistics-dashboard hidden"></div>
           <div class="results-scroll-container">
             <div id="results-card" class="results-card hidden"></div>
           </div>
           <button id="download-csv-btn" class="download-csv-btn hidden" type="button">Download CSV</button>
+        </section>
+
+        <section class="panel statistics-panel" aria-live="polite" id="statistics-panel" style="display: none;">
+          <div id="statistics-dashboard" class="statistics-dashboard hidden"></div>
         </section>
       </main>
     </div>

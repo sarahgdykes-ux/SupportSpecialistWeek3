@@ -36,6 +36,7 @@ const ui = {
   resultsCard: document.getElementById("results-card"),
   formPanel: document.getElementById("form-panel"),
   resultsPanel: document.getElementById("results-panel"),
+  statisticsPanel: document.getElementById("statistics-panel"),
   navTabs: document.querySelectorAll(".nav-tab"),
 };
 
@@ -49,7 +50,7 @@ function setLoading(isLoading) {
   }
 }
 
-// Switch between Input and Results views
+// Switch between Input, Results, and Statistics views
 function switchView(view) {
   ui.navTabs.forEach(tab => {
     if (tab.dataset.view === view) {
@@ -59,12 +60,18 @@ function switchView(view) {
     }
   });
 
+  // Hide all panels first
+  ui.formPanel.style.display = "none";
+  ui.resultsPanel.style.display = "none";
+  ui.statisticsPanel.style.display = "none";
+
+  // Show the selected panel
   if (view === "form") {
     ui.formPanel.style.display = "flex";
-    ui.resultsPanel.style.display = "none";
-  } else {
-    ui.formPanel.style.display = "none";
+  } else if (view === "results") {
     ui.resultsPanel.style.display = "flex";
+  } else if (view === "statistics") {
+    ui.statisticsPanel.style.display = "flex";
   }
 }
 

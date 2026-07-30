@@ -198,6 +198,21 @@ body {
   flex: 1;
 }
 
+.statistics-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  min-height: 0;
+  flex: 1;
+}
+
+.statistics-panel .statistics-dashboard {
+  margin-bottom: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
 .results-scroll-container {
   flex: 1;
   overflow-y: auto;
