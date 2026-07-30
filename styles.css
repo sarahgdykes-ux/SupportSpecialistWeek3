@@ -59,6 +59,23 @@ body {
   gap: 20px;
 }
 
+.hero-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.techflow-logo {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+
+.hero-text {
+  flex: 1;
+}
+
 .dark-mode-toggle {
   background: rgba(255, 255, 255, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -1000,6 +1017,15 @@ button:active {
   hero,
   panel {
     padding: 18px;
+  }
+
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .techflow-logo {
+    height: 50px;
   }
 
   button-row {
