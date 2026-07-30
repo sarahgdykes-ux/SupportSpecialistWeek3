@@ -91,6 +91,36 @@ body {
   flex: 1;
 }
 
+.nav-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.nav-tab {
+  flex: 1;
+  padding: 10px 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-tab:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.nav-tab.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
 .dark-mode-toggle {
   background: rgba(255, 255, 255, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.3);

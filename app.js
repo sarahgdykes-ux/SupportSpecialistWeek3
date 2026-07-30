@@ -34,6 +34,9 @@ const ui = {
   sendSelectedBtn: document.getElementById("send-selected-btn"),
   statisticsDashboard: document.getElementById("statistics-dashboard"),
   resultsCard: document.getElementById("results-card"),
+  formPanel: document.getElementById("form-panel"),
+  resultsPanel: document.getElementById("results-panel"),
+  navTabs: document.querySelectorAll(".nav-tab"),
 };
 
 // Toggle the loading state while the request is in flight.
@@ -43,6 +46,25 @@ function setLoading(isLoading) {
   if (isLoading) {
     ui.resultsCard.classList.add("hidden");
     ui.errorState.classList.add("hidden");
+  }
+}
+
+// Switch between Input and Results views
+function switchView(view) {
+  ui.navTabs.forEach(tab => {
+    if (tab.dataset.view === view) {
+      tab.classList.add("active");
+    } else {
+      tab.classList.remove("active");
+    }
+  });
+
+  if (view === "form") {
+    ui.formPanel.style.display = "flex";
+    ui.resultsPanel.style.display = "none";
+  } else {
+    ui.formPanel.style.display = "none";
+    ui.resultsPanel.style.display = "flex";
   }
 }
 
@@ -495,6 +517,9 @@ function renderResults(resultOrResults) {
   ui.downloadCsvButton.dataset.results = JSON.stringify(normalized);
   ui.ticketSearch.dataset.allResults = JSON.stringify(normalized);
   updateSelectedCount();
+  
+  // Switch to results view
+  switchView("results");
 }
 
 function filterResults(searchTerm) {
@@ -871,6 +896,13 @@ function attachEvents() {
     });
     
     updateSelectedCount();
+  });
+
+  // Navigation tabs
+  ui.navTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      switchView(tab.dataset.view);
+    });
   });
 
   // Send Selected

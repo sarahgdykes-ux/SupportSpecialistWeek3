@@ -25,8 +25,13 @@
         </button>
       </header>
 
+      <nav class="nav-bar">
+        <button class="nav-tab active" data-view="form">Input</button>
+        <button class="nav-tab" data-view="results">Results</button>
+      </nav>
+
       <main class="dashboard">
-        <section class="panel form-panel" aria-labelledby="ticket-form-title">
+        <section class="panel form-panel" aria-labelledby="ticket-form-title" id="form-panel">
           <h2 id="ticket-form-title">Analyze a Ticket</h2>
           <label for="ticket-input">Support Tickets</label>
           <textarea
@@ -70,7 +75,7 @@ Paste multiple tickets separated by a blank line..."
           </p>
         </section>
 
-        <section class="panel results-panel" aria-live="polite">
+        <section class="panel results-panel" aria-live="polite" id="results-panel" style="display: none;">
           <div id="results-placeholder" class="results-placeholder">
             Your analysis will appear here.
           </div>
