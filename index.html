@@ -34,6 +34,7 @@
           <button class="nav-tab" data-view="billing">Billing</button>
           <button class="nav-tab" data-view="infrastructure">Infrastructure</button>
           <button class="nav-tab" data-view="product">Product</button>
+          <button class="nav-tab" data-view="resolved">Resolved</button>
           <div class="nav-spacer"></div>
           <button class="nav-tab" data-view="statistics">Statistics</button>
         </nav>
@@ -133,6 +134,11 @@ Paste multiple tickets separated by a blank line..."
           <section class="panel department-panel" aria-live="polite" id="product-panel" style="display: none;">
             <h2>Product Tickets</h2>
             <div id="product-tickets" class="department-tickets"></div>
+          </section>
+
+          <section class="panel department-panel" aria-live="polite" id="resolved-panel" style="display: none;">
+            <h2>Resolved Tickets</h2>
+            <div id="resolved-tickets" class="department-tickets"></div>
           </section>
         </main>
       </div>

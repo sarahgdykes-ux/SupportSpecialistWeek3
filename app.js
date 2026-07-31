@@ -42,11 +42,13 @@ const ui = {
   billingPanel: document.getElementById("billing-panel"),
   infrastructurePanel: document.getElementById("infrastructure-panel"),
   productPanel: document.getElementById("product-panel"),
+  resolvedPanel: document.getElementById("resolved-panel"),
   supportTickets: document.getElementById("support-tickets"),
   engineeringTickets: document.getElementById("engineering-tickets"),
   billingTickets: document.getElementById("billing-tickets"),
   infrastructureTickets: document.getElementById("infrastructure-tickets"),
   productTickets: document.getElementById("product-tickets"),
+  resolvedTickets: document.getElementById("resolved-tickets"),
   navTabs: document.querySelectorAll(".nav-tab"),
 };
 
@@ -59,14 +61,17 @@ const departmentTickets = {
   product: []
 };
 
+// Store resolved tickets
+const resolvedTicketsList = [];
+
 // Render a single ticket card for department views
-function buildDepartmentTicketCard(ticket, index) {
+function buildDepartmentTicketCard(ticket, index, department) {
   const ticketText = ticket.ticket || "";
   const isLong = ticketText.length > 100;
   const previewText = isLong ? ticketText.substring(0, 100) + "..." : ticketText;
 
   return `
-    <article class="result-card" data-ticket-index="${index}">
+    <article class="result-card" data-ticket-index="${index}" data-department="${department}">
       <div class="result-card-header">
         <span class="ticket-id-badge">ID: ${escapeHtml(ticket.ticketId || (index + 1))}</span>
         <div class="ticket-description-wrapper">
@@ -85,6 +90,13 @@ function buildDepartmentTicketCard(ticket, index) {
           <span>${escapeHtml(ticket.resolution || 'Pending')}</span>
         </div>
       </div>
+      ${department !== 'resolved' ? `
+      <div class="result-actions">
+        <button class="resolve-ticket-btn" data-ticket-index="${index}" data-department="${department}">
+          Resolve Ticket
+        </button>
+      </div>
+      ` : ''}
     </article>
   `;
 }
@@ -97,7 +109,19 @@ function renderDepartmentTickets(department) {
   if (tickets.length === 0) {
     container.innerHTML = '<div class="results-placeholder" style="min-height: 100px;">No tickets sent to this department yet.</div>';
   } else {
-    container.innerHTML = tickets.map((ticket, index) => buildDepartmentTicketCard(ticket, index)).join('');
+    container.innerHTML = tickets.map((ticket, index) => buildDepartmentTicketCard(ticket, index, department)).join('');
+  }
+}
+
+// Render resolved tickets
+function renderResolvedTickets() {
+  const tickets = resolvedTicketsList || [];
+  const container = ui.resolvedTickets;
+  
+  if (tickets.length === 0) {
+    container.innerHTML = '<div class="results-placeholder" style="min-height: 100px;">No resolved tickets yet.</div>';
+  } else {
+    container.innerHTML = tickets.map((ticket, index) => buildDepartmentTicketCard(ticket, index, 'resolved')).join('');
   }
 }
 
@@ -130,6 +154,7 @@ function switchView(view) {
   ui.billingPanel.style.display = "none";
   ui.infrastructurePanel.style.display = "none";
   ui.productPanel.style.display = "none";
+  ui.resolvedPanel.style.display = "none";
 
   // Show the selected panel
   if (view === "form") {
@@ -153,6 +178,9 @@ function switchView(view) {
   } else if (view === "product") {
     ui.productPanel.style.display = "flex";
     renderDepartmentTickets("product");
+  } else if (view === "resolved") {
+    ui.resolvedPanel.style.display = "flex";
+    renderResolvedTickets();
   }
 }
 
@@ -1116,6 +1144,29 @@ function attachEvents() {
         descriptionEl.textContent = previewText;
         descriptionEl.classList.add("collapsed");
         e.target.textContent = "Show more";
+      }
+    }
+  });
+
+  // Resolve ticket button functionality
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("resolve-ticket-btn")) {
+      const ticketIndex = parseInt(e.target.dataset.ticketIndex);
+      const department = e.target.dataset.department;
+      
+      if (departmentTickets[department] && departmentTickets[department][ticketIndex]) {
+        const ticket = departmentTickets[department][ticketIndex];
+        
+        // Add to resolved tickets
+        resolvedTicketsList.push(ticket);
+        
+        // Remove from department
+        departmentTickets[department].splice(ticketIndex, 1);
+        
+        // Re-render the department view
+        renderDepartmentTickets(department);
+        
+        alert(`Ticket ID ${ticket.ticketId} has been resolved.`);
       }
     }
   });
