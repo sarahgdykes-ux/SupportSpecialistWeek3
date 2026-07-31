@@ -1025,7 +1025,11 @@ function attachEvents() {
         ticketsToRemove.push(index);
         
         // Uncheck the checkbox
-        checkboxes.find(cb => parseInt(cb.dataset.ticketIndex) === index).checked = false;
+        const checkboxArray = Array.from(checkboxes);
+        const checkbox = checkboxArray.find(cb => parseInt(cb.dataset.ticketIndex) === index);
+        if (checkbox) {
+          checkbox.checked = false;
+        }
       }
     });
     
