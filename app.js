@@ -961,6 +961,31 @@ function attachEvents() {
     console.log("Sent tickets:", sentTickets);
   });
 
+  // Priority and team dropdown change handlers
+  ui.resultsCard.addEventListener("change", (e) => {
+    if (e.target.classList.contains("priority-select") || e.target.classList.contains("team-select")) {
+      const ticketIndex = parseInt(e.target.dataset.ticketIndex);
+      const results = JSON.parse(ui.downloadCsvButton.dataset.results || "[]");
+      
+      if (results[ticketIndex]) {
+        // Update the ticket data
+        if (e.target.classList.contains("priority-select")) {
+          results[ticketIndex].priority = e.target.value;
+        } else if (e.target.classList.contains("team-select")) {
+          results[ticketIndex].suggestedTeam = e.target.value;
+        }
+        
+        // Update the stored results
+        ui.downloadCsvButton.dataset.results = JSON.stringify(results);
+        ui.ticketSearch.dataset.allResults = JSON.stringify(results);
+        
+        // Re-render results with new grouping and sorting
+        ui.resultsCard.innerHTML = buildResultsMarkup(results);
+        updateSelectedCount();
+      }
+    }
+  });
+
   // Send ticket button functionality
   ui.resultsCard.addEventListener("click", (e) => {
     if (e.target.classList.contains("send-ticket-btn")) {
