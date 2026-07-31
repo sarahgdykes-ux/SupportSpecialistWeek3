@@ -1157,6 +1157,9 @@ function attachEvents() {
       if (departmentTickets[department] && departmentTickets[department][ticketIndex]) {
         const ticket = departmentTickets[department][ticketIndex];
         
+        // Update resolution to Resolved
+        ticket.resolution = "Resolved";
+        
         // Add to resolved tickets
         resolvedTicketsList.push(ticket);
         
