@@ -29,6 +29,12 @@
         <nav class="nav-bar">
           <button class="nav-tab active" data-view="form">Input</button>
           <button class="nav-tab" data-view="results">Results</button>
+          <button class="nav-tab" data-view="support">Support</button>
+          <button class="nav-tab" data-view="engineering">Engineering</button>
+          <button class="nav-tab" data-view="billing">Billing</button>
+          <button class="nav-tab" data-view="infrastructure">Infrastructure</button>
+          <button class="nav-tab" data-view="product">Product</button>
+          <div class="nav-spacer"></div>
           <button class="nav-tab" data-view="statistics">Statistics</button>
         </nav>
 
@@ -102,6 +108,31 @@ Paste multiple tickets separated by a blank line..."
 
           <section class="panel statistics-panel" aria-live="polite" id="statistics-panel" style="display: none;">
             <div id="statistics-dashboard" class="statistics-dashboard hidden"></div>
+          </section>
+
+          <section class="panel department-panel" aria-live="polite" id="support-panel" style="display: none;">
+            <h2>Support Tickets</h2>
+            <div id="support-tickets" class="department-tickets"></div>
+          </section>
+
+          <section class="panel department-panel" aria-live="polite" id="engineering-panel" style="display: none;">
+            <h2>Engineering Tickets</h2>
+            <div id="engineering-tickets" class="department-tickets"></div>
+          </section>
+
+          <section class="panel department-panel" aria-live="polite" id="billing-panel" style="display: none;">
+            <h2>Billing Tickets</h2>
+            <div id="billing-tickets" class="department-tickets"></div>
+          </section>
+
+          <section class="panel department-panel" aria-live="polite" id="infrastructure-panel" style="display: none;">
+            <h2>Infrastructure Tickets</h2>
+            <div id="infrastructure-tickets" class="department-tickets"></div>
+          </section>
+
+          <section class="panel department-panel" aria-live="polite" id="product-panel" style="display: none;">
+            <h2>Product Tickets</h2>
+            <div id="product-tickets" class="department-tickets"></div>
           </section>
         </main>
       </div>

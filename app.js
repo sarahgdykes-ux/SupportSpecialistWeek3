@@ -37,8 +37,69 @@ const ui = {
   formPanel: document.getElementById("form-panel"),
   resultsPanel: document.getElementById("results-panel"),
   statisticsPanel: document.getElementById("statistics-panel"),
+  supportPanel: document.getElementById("support-panel"),
+  engineeringPanel: document.getElementById("engineering-panel"),
+  billingPanel: document.getElementById("billing-panel"),
+  infrastructurePanel: document.getElementById("infrastructure-panel"),
+  productPanel: document.getElementById("product-panel"),
+  supportTickets: document.getElementById("support-tickets"),
+  engineeringTickets: document.getElementById("engineering-tickets"),
+  billingTickets: document.getElementById("billing-tickets"),
+  infrastructureTickets: document.getElementById("infrastructure-tickets"),
+  productTickets: document.getElementById("product-tickets"),
   navTabs: document.querySelectorAll(".nav-tab"),
 };
+
+// Store sent tickets by department
+const departmentTickets = {
+  support: [],
+  engineering: [],
+  billing: [],
+  infrastructure: [],
+  product: []
+};
+
+// Render a single ticket card for department views
+function buildDepartmentTicketCard(ticket, index) {
+  const ticketText = ticket.ticket || "";
+  const isLong = ticketText.length > 100;
+  const previewText = isLong ? ticketText.substring(0, 100) + "..." : ticketText;
+
+  return `
+    <article class="result-card" data-ticket-index="${index}">
+      <div class="result-card-header">
+        <span class="ticket-id-badge">ID: ${escapeHtml(ticket.ticketId || (index + 1))}</span>
+        <div class="ticket-description-wrapper">
+          <strong class="ticket-description ${isLong ? 'collapsed' : ''}" data-full-text="${escapeHtml(ticketText)}">${escapeHtml(previewText)}</strong>
+          ${isLong ? `<button class="expand-toggle" data-ticket-index="${index}">Show more</button>` : ''}
+        </div>
+        <span class="badge ${getPriorityBadgeClass(ticket.priority)}">${escapeHtml(ticket.priority || 'Medium')}</span>
+      </div>
+      <div class="result-grid">
+        <div class="result-item">
+          <strong>Issue Type:</strong>
+          <span>${escapeHtml(ticket.issueType || 'Other')}</span>
+        </div>
+        <div class="result-item">
+          <strong>Resolution:</strong>
+          <span>${escapeHtml(ticket.resolution || 'Pending')}</span>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+// Render all tickets for a specific department
+function renderDepartmentTickets(department) {
+  const tickets = departmentTickets[department] || [];
+  const container = ui[`${department}Tickets`];
+  
+  if (tickets.length === 0) {
+    container.innerHTML = '<div class="results-placeholder" style="min-height: 100px;">No tickets sent to this department yet.</div>';
+  } else {
+    container.innerHTML = tickets.map((ticket, index) => buildDepartmentTicketCard(ticket, index)).join('');
+  }
+}
 
 // Toggle the loading state while the request is in flight.
 function setLoading(isLoading) {
@@ -50,7 +111,7 @@ function setLoading(isLoading) {
   }
 }
 
-// Switch between Input, Results, and Statistics views
+// Switch between Input, Results, Statistics, and Department views
 function switchView(view) {
   ui.navTabs.forEach(tab => {
     if (tab.dataset.view === view) {
@@ -64,6 +125,11 @@ function switchView(view) {
   ui.formPanel.style.display = "none";
   ui.resultsPanel.style.display = "none";
   ui.statisticsPanel.style.display = "none";
+  ui.supportPanel.style.display = "none";
+  ui.engineeringPanel.style.display = "none";
+  ui.billingPanel.style.display = "none";
+  ui.infrastructurePanel.style.display = "none";
+  ui.productPanel.style.display = "none";
 
   // Show the selected panel
   if (view === "form") {
@@ -72,6 +138,21 @@ function switchView(view) {
     ui.resultsPanel.style.display = "flex";
   } else if (view === "statistics") {
     ui.statisticsPanel.style.display = "flex";
+  } else if (view === "support") {
+    ui.supportPanel.style.display = "flex";
+    renderDepartmentTickets("support");
+  } else if (view === "engineering") {
+    ui.engineeringPanel.style.display = "flex";
+    renderDepartmentTickets("engineering");
+  } else if (view === "billing") {
+    ui.billingPanel.style.display = "flex";
+    renderDepartmentTickets("billing");
+  } else if (view === "infrastructure") {
+    ui.infrastructurePanel.style.display = "flex";
+    renderDepartmentTickets("infrastructure");
+  } else if (view === "product") {
+    ui.productPanel.style.display = "flex";
+    renderDepartmentTickets("product");
   }
 }
 
@@ -924,26 +1005,50 @@ function attachEvents() {
     
     const selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.ticketIndex));
     const sentTickets = [];
+    const ticketsToRemove = [];
     
     selectedIndices.forEach(index => {
       if (results[index]) {
+        const ticket = results[index];
+        const team = ticket.suggestedTeam || "support";
+        const teamKey = team.toLowerCase();
+        
+        // Add ticket to department
+        if (departmentTickets[teamKey]) {
+          departmentTickets[teamKey].push(ticket);
+        }
+        
         sentTickets.push({
-          id: results[index].ticketId,
-          team: results[index].suggestedTeam
+          id: ticket.ticketId,
+          team: team
         });
         
-        // Update the individual send button
-        const sendBtn = document.querySelector(`.send-ticket-btn[data-ticket-index="${index}"]`);
-        if (sendBtn) {
-          sendBtn.textContent = "Sent ✓";
-          sendBtn.disabled = true;
-          sendBtn.classList.add("sent");
-        }
+        ticketsToRemove.push(index);
         
         // Uncheck the checkbox
         checkboxes.find(cb => parseInt(cb.dataset.ticketIndex) === index).checked = false;
       }
     });
+    
+    // Remove sent tickets from results (in reverse order to maintain indices)
+    ticketsToRemove.sort((a, b) => b - a).forEach(index => {
+      results.splice(index, 1);
+    });
+    
+    // Update the stored results
+    ui.downloadCsvButton.dataset.results = JSON.stringify(results);
+    ui.ticketSearch.dataset.allResults = JSON.stringify(results);
+    
+    // Re-render results
+    if (results.length === 0) {
+      ui.placeholder.classList.remove("hidden");
+      ui.resultsCard.classList.add("hidden");
+      ui.searchContainer.classList.add("hidden");
+      ui.bulkActions.classList.add("hidden");
+      ui.downloadCsvButton.classList.add("hidden");
+    } else {
+      ui.resultsCard.innerHTML = buildResultsMarkup(results);
+    }
     
     updateSelectedCount();
     
@@ -957,7 +1062,7 @@ function attachEvents() {
       .map(([team, count]) => `${count} ticket(s) to ${team}`)
       .join(', ');
     
-    alert(`Sent: ${message} (placeholder)`);
+    alert(`Sent: ${message}`);
     console.log("Sent tickets:", sentTickets);
   });
 
