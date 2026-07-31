@@ -989,14 +989,18 @@ function attachEvents() {
   });
 
   // Send Selected
-  ui.sendSelectedBtn.addEventListener("click", () => {
-    const checkboxes = document.querySelectorAll('.ticket-checkbox:checked');
-    const results = JSON.parse(ui.downloadCsvButton.dataset.results || "[]");
-    
-    if (checkboxes.length === 0) {
-      alert("Please select at least one ticket to send.");
-      return;
-    }
+  if (ui.sendSelectedBtn) {
+    ui.sendSelectedBtn.addEventListener("click", () => {
+      console.log("Send button clicked");
+      const checkboxes = document.querySelectorAll('.ticket-checkbox:checked');
+      console.log("Checked checkboxes:", checkboxes.length);
+      const results = JSON.parse(ui.downloadCsvButton.dataset.results || "[]");
+      console.log("Results:", results.length);
+      
+      if (checkboxes.length === 0) {
+        alert("Please select at least one ticket to send.");
+        return;
+      }
     
     const selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.ticketIndex));
     const sentTickets = [];
@@ -1065,7 +1069,8 @@ function attachEvents() {
       const firstTeam = sentTickets[0].team.toLowerCase();
       switchView(firstTeam);
     }
-  });
+    });
+  }
 
   // Priority and team dropdown change handlers
   ui.resultsCard.addEventListener("change", (e) => {
